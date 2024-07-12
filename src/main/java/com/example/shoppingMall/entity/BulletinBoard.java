@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 public class BulletinBoard {
     @Id
-    private Long boardId;
+    private Long boardCode;
 
     @ManyToOne
     @JoinColumn(name = "productCode")
@@ -15,7 +15,7 @@ public class BulletinBoard {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "userInfoId")
+    @JoinColumn(name = "userInfoCode")
     private UserInfo userInfo;
     private int views; //조회수
     private boolean hasComment;

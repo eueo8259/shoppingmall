@@ -8,9 +8,9 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Cart {
     @Id
-    private Long cartId;
+    private Long cartCode;
     @ManyToOne
-    @JoinColumn(name = "userInfoId")
+    @JoinColumn(name = "userInfoCode")
     private UserInfo userInfo;
 
     @ManyToOne
