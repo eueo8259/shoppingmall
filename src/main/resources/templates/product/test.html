@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 목록</title>
+</head>
+<body>
+<ul th:each="category : ${categoryList}">
+    <li>
+        <a th:href="@{/product/list(categoryName=${category.categoryName})}" th:text="${category.categoryName}"></a>
+    </li>
+</ul>
+</body>
+</html>

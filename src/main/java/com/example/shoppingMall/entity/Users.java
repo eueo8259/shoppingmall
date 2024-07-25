@@ -7,7 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 
 @Entity
-public class User {
+public class Users {
     @Id
     private String id;
     private String password;

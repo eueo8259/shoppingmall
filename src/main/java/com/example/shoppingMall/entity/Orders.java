@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class Order {
+public class Orders {
     @Id
     private Long orderCode;
     @ManyToOne

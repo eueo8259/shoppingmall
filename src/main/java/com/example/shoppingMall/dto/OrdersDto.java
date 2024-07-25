@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDto {
+public class OrdersDto {
     private Long orderCode;
     private Long productCode;
     private Long userInfoCode;
