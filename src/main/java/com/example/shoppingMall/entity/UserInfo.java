@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,12 +15,12 @@ public class UserInfo {
     private String phoneNumber;
     private LocalDate createdDate;
     private String email;
-    private Date birthDate;
+    private LocalDate birthdate;
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
     private String grade;
     @ManyToOne
     @JoinColumn(name = "id")
-    private User user;
+    private Users user;
     private String isActive;
 }
