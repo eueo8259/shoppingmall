@@ -15,5 +15,4 @@ public class Review {
     private int rating;
     @Column(length = 1000)
     private String reviewText;
-
 }

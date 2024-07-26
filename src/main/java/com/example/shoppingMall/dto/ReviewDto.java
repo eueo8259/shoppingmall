@@ -13,5 +13,4 @@ public class ReviewDto {
     private Long productCode;
     private int rating;
     private String reviewText;
-
 }

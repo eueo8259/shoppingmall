@@ -14,11 +14,11 @@ public class CategoryDto {
     private String categoryCode;
     private String categoryName;
 
-    public static CategoryDto fromCategoryEntity(Category category){
+    public static CategoryDto fromCategoryEntity(Category category) {
         return new CategoryDto(
                 category.getCategoryCode(),
                 category.getCategoryName()
         );
     }
-
 }
+

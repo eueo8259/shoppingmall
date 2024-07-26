@@ -12,5 +12,4 @@ public class CartDto {
     private Long userInfoCode;
     private Long productCode;
     private int quantity;
-
 }

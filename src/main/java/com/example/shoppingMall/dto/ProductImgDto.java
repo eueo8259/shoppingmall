@@ -12,5 +12,4 @@ public class ProductImgDto {
     private String imgCode;
     private Long productCode;
     private List<String> imgUrl;
-
 }

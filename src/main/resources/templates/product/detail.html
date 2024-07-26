@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-info {
+            flex: 2;
+            padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .product-name {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 2em;
+            color: #b12704;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector label {
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-controls button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .quantity-controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .quantity-controls input {
+            font-size: 1em;
+            padding: 5px;
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .main-image {
+            flex: 1;
+            text-align: right;
+        }
+
+        .main-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .additional-info {
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .sub-images {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .sub-images img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .description {
+            flex: 2;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 미디어 쿼리 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .product-info {
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .main-image {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .additional-info {
+                flex-direction: column;
+            }
+
+            .sub-images {
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="product-info">
+        <div class="product-name" th:text="${productDto.productName}">상품 이름</div>
+        <div class="product-price" id="price" th:text="${productDto.productPrice} + '원'">상품 가격</div>
+        <div class="quantity-selector">
+            <label for="quantity">수량:</label>
+            <div class="quantity-controls">
+                <button type="button" id="decrease">-</button>
+                <input type="number" id="quantity" name="quantity" min="1" value="1">
+                <button type="button" id="increase">+</button>
+            </div>
+        </div>
+        <button class="button" id="add-to-cart">장바구니에 추가</button>
+        <button class="button" id="buy-now">지금 구매</button>
+    </div>
+    <div class="main-image">
+        <img th:src="@{${productDto.mainImg}}" alt="Main Image">
+    </div>
+    <div class="additional-info">
+        <div class="sub-images" th:each="img : ${productDto.imgList}">
+            <img th:src="@{${img}}" alt="Sub Image">
+        </div>
+        <div class="description" th:text="${productDto.description}">
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const quantityInput = document.getElementById('quantity');
+        const decreaseButton = document.getElementById('decrease');
+        const increaseButton = document.getElementById('increase');
+        const priceElement = document.getElementById('price');
+        const originalPrice = parseInt(priceElement.textContent.replace(/[^0-9]/g, ''), 10);
+
+        function formatPrice(price) {
+            return price.toLocaleString();
+        }
+
+        function updatePrice() {
+            priceElement.textContent = formatPrice(originalPrice) + '원';
+        }
+
+        decreaseButton.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value, 10);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseButton.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value, 10);
+            quantityInput.value = currentValue + 1;
+        });
+
+        // Initial price formatting
+        updatePrice();
+    });
+</script>
+</body>
+</html>

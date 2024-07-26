@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Registration</title>
+    <style>
+        .preview-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .preview-container img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 10px;
+        }
+        .delete-button {
+            cursor: pointer;
+            color: red;
+            font-size: 20px;
+            font-weight: bold;
+            display: none; /* 기본적으로 숨김 */
+        }
+        .visible {
+            display: block; /* 미리보기 이미지와 삭제 버튼을 표시 */
+        }
+    </style>
+</head>
+<body>
+<form id="frm" th:action="@{/product/insert}" method="post" enctype="multipart/form-data">
+    <label>메인 이미지</label>
+    <div class="preview-container" id="mainImageContainer"></div>
+    <input type="file" id="fileInputMain" name="mainImage" accept="image/*" onchange="imgPreviewMain(event)"><br>
+
+    <label>상품 이름</label>
+    <input type="text" id="productName" name="productName" th:value="${productDto.productName}"> <br>
+    <label>상품 가격</label>
+    <input type="text" id="productPrice" name="productPrice" th:value="${productDto.productPrice}"><br>
+    <label>상품 수량</label>
+    <input type="text" id="productQuantity" name="productQuantity" th:value="${productDto.productQuantity}"><br>
+    <label>통화 명칭</label>
+    <input type="text" id="currency" name="currency" th:value="${productDto.currency}"><br>
+    <label>카테고리</label>
+    <select id="location" th:field="${productDto.categoryCode}" name="location">
+        <option disabled selected value="">상품의 카테고리를 선택해주세요</option>
+        <option th:each="categoryDtoList : ${categoryDtoList}"
+                th:value="${categoryDtoList.categoryCode}"
+                th:text="${categoryDtoList.categoryName}"
+                th:attr="data-rate=${productDto.categoryCode}"
+        ></option>
+    </select> <br>
+    <label>상세 설명</label>
+    <input type="text" id="description" name="description" th:value="${productDto.description}"><br>
+
+    <label>서브 이미지들</label>
+    <div class="preview-container" id="subImageContainer"></div>
+    <input type="file" id="fileInputSub" name="subImages" accept="image/*" multiple onchange="imgPreviewSub(event)"><br>
+
+    <button type="submit" id="uploadButton" onclick="uploadData()">등록</button>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function imgPreviewMain(event) {
+        const input = event.target;
+        const files = input.files;
+        const previewContainer = document.getElementById('mainImageContainer');
+
+        // 기존 미리보기 내용 제거
+        previewContainer.innerHTML = '';
+
+        if (files.length > 0) {
+            const file = files[0]; // 첫 번째 파일 선택
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('visible');
+
+                const deleteSpan = document.createElement('span');
+                deleteSpan.className = 'delete-button visible';
+                deleteSpan.textContent = '×';
+
+                // 삭제 버튼 클릭 시
+                deleteSpan.onclick = function() {
+                    previewContainer.innerHTML = ''; // 미리보기 내용 제거
+                    input.value = ''; // 파일 입력 초기화
+                }
+
+                previewContainer.appendChild(img);
+                previewContainer.appendChild(deleteSpan);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function imgPreviewSub(event) {
+        const input = event.target;
+        const files = input.files;
+        const previewContainer = document.getElementById('subImageContainer');
+
+        // FileList를 배열로 변환
+        const filesArray = Array.from(files);
+
+        filesArray.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('visible');
+
+                const deleteSpan = document.createElement('span');
+                deleteSpan.className = 'delete-button visible';
+                deleteSpan.textContent = '×';
+
+                deleteSpan.onclick = function() {
+                    previewContainer.removeChild(img);
+                    previewContainer.removeChild(deleteSpan);
+
+                    // DataTransfer 객체를 사용하여 파일 목록에서 해당 파일 제거
+                    const dt = new DataTransfer();
+                    Array.from(input.files).forEach((fileItem, fileIndex) => {
+                        if (fileIndex !== index) {
+                            dt.items.add(fileItem);
+                        }
+                    });
+                    input.files = dt.files; // 업데이트된 파일 목록 설정
+                }
+
+                previewContainer.appendChild(img);
+                previewContainer.appendChild(deleteSpan);
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+
+<!--    function uploadData() {-->
+<!--        const formData = new FormData(document.getElementById('frm'));-->
+
+<!--        axios.post('/product/insert', formData, {-->
+<!--            headers: {-->
+<!--                'Content-Type': 'multipart/form-data'-->
+<!--            }-->
+<!--        })-->
+<!--        .then(response => {-->
+<!--            console.log('Data uploaded successfully');-->
+<!--        })-->
+<!--        .catch(error => {-->
+<!--            console.error('Error uploading data', error);-->
+<!--        });-->
+<!--    }-->
+</script>
+</body>
+</html>
