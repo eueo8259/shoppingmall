@@ -44,22 +44,23 @@ $(document).ready(function() {
         var domain = $("#domain").val();
         var password = $('#password').val();
         var password2 = $('#password2').val();
-        $.ajax({
-            url: '/user/checkDuplicate',
-            type: 'POST',
-            data: { id: userId },
-            success: function(response) {
-                if(response.isDuplicate) {
-                    alert("아이디가 중복되었습니다. 다른 아이디를 사용하세요.");
-                } else {
-                    alert("사용 가능한 아이디입니다.");
-                    checkOk = true;
-                }
-            },
-            error: function() {
-                alert("아이디 중복 체크 중 오류가 발생했습니다. 다시 시도해 주세요.");
-            }
-        });
+// 보류
+//        $.ajax({
+//            url: '/user/checkDuplicate',
+//            type: 'POST',
+//            data: { id: userId },
+//            success: function(response) {
+//                if(response.isDuplicate) {
+//                    alert("아이디가 중복되었습니다. 다른 아이디를 사용하세요.");
+//                } else {
+//                    alert("사용 가능한 아이디입니다.");
+//                    checkOk = true;
+//                }
+//            },
+//            error: function() {
+//                alert("아이디 중복 체크 중 오류가 발생했습니다. 다시 시도해 주세요.");
+//            }
+//        });
 
         if(checkOk === false) {
             alert("아이디 중복을 확인해주세요")
