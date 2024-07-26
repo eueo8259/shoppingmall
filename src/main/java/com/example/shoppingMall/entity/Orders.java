@@ -7,15 +7,17 @@ import java.time.LocalDate;
 @Entity
 public class Orders {
     @Id
-    private Long orderCode;
+    private Long orderId;
     @ManyToOne
     @JoinColumn(name = "productCode")
     private Product product;
     @ManyToOne
-    @JoinColumn(name = "userInfoCode")
+    @JoinColumn(name = "userInfoId")
     private UserInfo userInfo;
     private int orderQuantity;
-    private String orderStatus; //주문 상태값 (배송중, 배송완료, 배송준비)
+    @ManyToOne
+    @JoinColumn(name = "code")
+    private Common common;
     private LocalDate orderDate;
     @ManyToOne
     @JoinColumn(name = "deliveryCode")

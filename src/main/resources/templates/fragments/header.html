@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>semi university</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .logo-img {
+            max-height: 100px;
+            width: auto;
+        }
+        header {
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="header" th:fragment="header">
+    <header class="container d-flex align-items-center justify-content-between border-bottom" style="height: 100px;">
+        <div class="d-flex align-items-center">
+            <a th:href="@{/}" class="d-flex align-items-center">
+                <img th:src="@{/images/logo.png}" alt="logo" class="logo-img" style="height: 100px">
+            </a>
+        </div>
+
+        <div class="text-end">
+            <a role="button" id="login" class="btn btn-outline-primary me-2 btn-sm"
+               sec:authorize="!isAuthenticated()"
+               th:href="@{user/login}">로그인</a>
+
+            <a role="button" id="signUp" class="btn btn-outline-primary me-2 btn-sm"
+               sec:authorize="!isAuthenticated()"
+               th:href="@{user/signUp}">회원가입</a>
+
+            <a role="button" id="profile" class="btn btn-outline-primary me-2 btn-sm"
+               sec:authorize="isAuthenticated()"
+               th:href="@{/}">마이페이지</a>
+
+            <a role="button" id="loginout" class="btn btn-outline-primary me-2 btn-sm"
+               sec:authorize="isAuthenticated()"
+               th:href="@{/logout}">로그아웃</a>
+        </div>
+    </header>
+</div>
+</body>
+</html>
