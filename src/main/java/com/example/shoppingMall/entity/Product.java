@@ -1,7 +1,10 @@
 package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +13,9 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +25,9 @@ public class Product {
     private BigDecimal productPrice;
     private LocalDateTime productRegisterDate;
     String currency; //상품 통화 명칭 ex)USD, KRW, EUR
+    @ManyToOne
+    @JoinColumn(name = "userInfoCode")
+    private UserInfo userInfo; //상품 판매자
     @ManyToOne
     @JoinColumn(name = "categoryCode")
     private Category category;

@@ -5,9 +5,9 @@ import com.example.shoppingMall.dto.ProductDto;
 import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.entity.Product;
 import com.example.shoppingMall.entity.ProductImg;
+import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.repository.ProductRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,11 +57,15 @@ public class ProductService {
 
         Product product = new Product();
         Category category = em.find(Category.class, productDto.getCategoryCode());
+        UserInfo userInfo = em.find(UserInfo.class, productDto.getUserInfoCode());
+
         product.setProductName(productDto.getProductName());
         product.setProductPrice(productDto.getProductPrice());
         product.setProductQuantity(productDto.getProductQuantity());
         product.setCurrency(productDto.getCurrency());
         product.setCategory(category);
+        product.setProductRegisterDate(LocalDateTime.now());
+        product.setUserInfo(userInfo);
         product.setDescription(productDto.getDescription());
         product.setImgList(new ArrayList<>());
 
@@ -138,21 +143,39 @@ public class ProductService {
 
         return filePaths;
     }
+    @Transactional
+    public List<ProductDto> findMyProductList(Long userInfoCode) {
+        List<ProductDto> productDtoList = new ArrayList<>();
 
+        String sql = "SELECT p FROM Product p WHERE p.userInfo.userInfoCode = :userInfoCode";
+        TypedQuery<Product> query = em.createQuery(sql, Product.class);
+        query.setParameter("userInfoCode", userInfoCode);
+        List<Product> productList = query.getResultList();
+
+        for (Product product : productList){
+            ProductDto productDto = productDtoFromEntity(product);
+            productDtoList.add(productDto);
+        }
+        return productDtoList;
+    }
     private ProductDto productDtoFromEntity(Product product) {
+
         ProductDto productDto = new ProductDto();
-        productDto.setProductCode(product.getProductCode());
-        productDto.setProductName(product.getProductName());
 
         BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
                 .multiply(product.getProductPrice());
         BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
 
+        productDto.setProductCode(product.getProductCode());
+        productDto.setProductName(product.getProductName());
         productDto.setProductPrice(roundedPrice);
+        productDto.setOriginalPrice(product.getProductPrice());
+        productDto.setCurrency(product.getCurrency());
         productDto.setProductRate(product.getProductRate());
         productDto.setProductQuantity(product.getProductQuantity());
         productDto.setProductStatus(product.getStatus()); //나중에 상태값에 따라서 출력되고 출력되지않도록 쿼리문 수정
         productDto.setDescription(product.getDescription());
+        productDto.setCategoryName(product.getCategory().getCategoryName());
         productDto.setImgList(new ArrayList<>());
         for (ProductImg image : product.getImgList()) {
             if (image.getImgUrl().contains("main")) { // "main"이 포함된 이미지를 찾음
@@ -168,11 +191,10 @@ public class ProductService {
 
 
     @Transactional
-        public List<Category> test() {
-            String sql = "SELECT c FROM Category c";
-            TypedQuery<Category> query = em.createQuery(sql, Category.class);
-            List<Category> categoryList = query.getResultList();
-            return categoryList;
-        }
-
+    public List<Category> categoryList() {
+        String sql = "SELECT c FROM Category c";
+        TypedQuery<Category> query = em.createQuery(sql, Category.class);
+        List<Category> categoryList = query.getResultList();
+        return categoryList;
+    }
 }
