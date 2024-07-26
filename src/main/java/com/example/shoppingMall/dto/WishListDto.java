@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WishListDto {
-    private Long wishListId;
-    private Long userInfoId;
+    private Long wishListCode;
+    private Long userInfoCode;
     private Long productCode;
 }

@@ -5,13 +5,7 @@ import jakarta.persistence.*;
 @Entity
 public class BulletinBoard {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
-    private Long boardId;
-    @ManyToOne
-    @JoinColumn(name = "code")
-    private Common common;
-
-    private String boardTitle;
+    private Long boardCode;
 
     @ManyToOne
     @JoinColumn(name = "productCode")
@@ -19,8 +13,6 @@ public class BulletinBoard {
 
     @Column(length = 1000)
     private String content;
-
-    private String creationDate;
 
     @ManyToOne
     @JoinColumn(name = "userInfoCode")

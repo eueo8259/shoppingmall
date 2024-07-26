@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCouponDto {
-    private Long userCouponId;
-    private Long couponId;
-    private Long userInfoId;
+    private Long userCouponCode;
+    private Long couponCode;
+    private Long userInfoCode;
 
 }

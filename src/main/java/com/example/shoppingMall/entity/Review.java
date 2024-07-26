@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 @Entity
 public class Review {
     @Id
-    private Long reviewId;
+    private Long reviewCode;
     @ManyToOne
-    @JoinColumn(name = "userInfoId")
+    @JoinColumn(name = "userInfoCode")
     private UserInfo userInfo;
     @ManyToOne
     @JoinColumn(name = "productCode")

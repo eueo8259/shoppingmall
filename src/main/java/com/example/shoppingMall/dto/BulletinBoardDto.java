@@ -8,12 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BulletinBoardDto {
-    private Long boardId;
+    private Long boardCode;
     private String code;
-    private String boardTitle;
     private Long productCode;
     private String content;
-    private Long userInfoId;
+    private Long userInfoCode;
     private int views; //조회수
     private boolean hasComment;
 

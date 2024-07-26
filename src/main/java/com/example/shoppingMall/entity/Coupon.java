@@ -8,10 +8,10 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Coupon {
     @Id
-    private Long couponId;
+    private Long couponCode;
     @ManyToOne
-    @JoinColumn(name = "code")
-    private Common common;
+    @JoinColumn(name = "categoryCode")
+    private Category category;
     private double discountRate;
     private int discountAmount;
 }

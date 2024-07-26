@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CouponDto {
-    private Long couponId;
+    private Long couponCode;
     private String code;
     private double discountRate;
     private int discountAmount;

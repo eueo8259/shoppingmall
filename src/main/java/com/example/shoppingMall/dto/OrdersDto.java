@@ -7,12 +7,12 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDto {
-    private Long orderId;
+public class OrdersDto {
+    private Long orderCode;
     private Long productCode;
-    private Long userInfoId;
+    private Long userInfoCode;
     private int orderQuantity;
-    private String code;
+    private String orderStatus; //주문 상태값 (배송중, 배송완료, 배송준비)
     private LocalDate orderDate;
     private Long deliveryCode;
 

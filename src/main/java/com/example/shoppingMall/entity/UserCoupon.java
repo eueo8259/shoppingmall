@@ -8,11 +8,11 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class UserCoupon {
     @Id
-    private Long userCouponId;
+    private Long userCouponCode;
     @ManyToOne
-    @JoinColumn(name = "couponId")
+    @JoinColumn(name = "couponCode")
     private Coupon coupon;
     @ManyToOne
-    @JoinColumn(name = "userInfoId")
+    @JoinColumn(name = "userInfoCode")
     private UserInfo userInfo;
 }

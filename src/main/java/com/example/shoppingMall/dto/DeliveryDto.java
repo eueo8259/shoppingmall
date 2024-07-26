@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeliveryDto {
     private Long deliveryCode;
-    private Long userInfoId;
+    private Long userInfoCode;
     private int postalCode;
     private String address;
     private String contactNumber;
