@@ -46,6 +46,15 @@ public class UserController {
         response.put("isDuplicate", isDuplicate);
         return response;
     }
+    @PostMapping("/checkDuplicate")
+    @ResponseBody
+    public Map<String, Boolean> checkDuplicate(@RequestParam("id") String userId) {
+        boolean isDuplicate = userService.isIdDuplicate(userId);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isDuplicate", isDuplicate);
+        return response;
+    }
+
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("userDto", new UserDto());

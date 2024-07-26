@@ -8,10 +8,12 @@ import com.example.shoppingMall.repository.UserInfoRepository;
 import com.example.shoppingMall.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -25,6 +27,27 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public void userInfoInsert(UserInfoDto userInfoDto) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String RRN = userInfoDto.getRRN();
+        String year = RRN.substring(0, 2);
+        String month = RRN.substring(2, 4);
+        String day = RRN.substring(4, 6);
+        String rrn = RRN.substring(7, 8);
+        log.info(year.toString());
+        log.info(month.toString());
+        log.info(day.toString());
+        log.info(rrn.toString());
+
+        String birth = null;
+        if(rrn.equals("1") || rrn.equals("2") || rrn.equals("5") || rrn.equals("6")) {
+            birth = "19"+ year + "-" + month + "-" + day;
+        } else {
+            birth = "20"+ year + "-" + month + "-" + day;
+        }
+        log.info(birth.toString());
+        LocalDate birthDate = LocalDate.parse(birth, formatter);
+        log.info(birthDate.toString());
+        userInfoDto.setBirthDate(birthDate);
         LocalDate now = LocalDate.now();
         userInfoDto.setCreatedDate(now);
         userInfoDto.setGrade("일반");
@@ -43,5 +66,10 @@ public class UserService {
 
     public boolean isIdDuplicate(String id) {
         return userRepository.findById(id).isPresent();
+    }
+
+    public UserInfo findByUserId(String userId) {
+        UserInfo userInfo = userInfoRepository.findByUserId(userId);
+        return userInfo;
     }
 }

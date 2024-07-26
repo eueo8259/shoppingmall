@@ -48,6 +48,7 @@ public class UserInfoDto {
         info.setPhoneNumber(dto.getPhoneNumber());
         info.setCreatedDate(dto.getCreatedDate());
         info.setEmail(dto.getEmail());
+        info.setBirthDate(dto.getBirthDate());
         info.setGrade(dto.getGrade());
         info.setUser(dto.getUser());
         info.setIsActive(dto.getIsActive());
