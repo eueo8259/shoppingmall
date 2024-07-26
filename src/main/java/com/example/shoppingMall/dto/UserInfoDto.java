@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoDto {
-    private Long userInfoId;
+    private Long userInfoCode;
     private String userName;
     private String RRN; //주민번호 약자
     private String phoneNumber;

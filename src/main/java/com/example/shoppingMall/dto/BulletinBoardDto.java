@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class BulletinBoardDto {
     private Long boardId;
     private String code;
+    private String boardTitle;
     private Long productCode;
     private String content;
     private Long userInfoId;
