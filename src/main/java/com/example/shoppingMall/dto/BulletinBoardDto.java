@@ -17,3 +17,4 @@ public class BulletinBoardDto {
     private boolean hasComment;
 
 }
+

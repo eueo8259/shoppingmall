@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-img {
+            max-width: 150px;
+            height: auto;
+            margin-right: 15px;
+        }
+        .product-details {
+            flex-grow: 1;
+        }
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .product-actions button {
+            margin-top: 5px;
+        }
+    </style>
+    <script>
+        // 숫자를 세 자리마다 ','로 구분하여 포맷하는 함수
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // 문서 로드 후 숫자를 포맷팅
+        document.addEventListener("DOMContentLoaded", function() {
+            const priceElements = document.querySelectorAll(".price");
+            priceElements.forEach(element => {
+                const rawPrice = parseFloat(element.textContent.replace(/,/g, ''));
+                if (!isNaN(rawPrice)) {
+                    element.textContent = formatNumber(rawPrice) + " 원";
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>상품 목록</h1>
+    <div th:each="product : ${productDtoList}" class="product-card">
+        <a th:href="@{'/product/detail/' + ${product.productCode}}">
+            <img th:src="@{${product.mainImg}}" alt="Product Image" class="product-img">
+        </a>
+        <div class="product-details">
+            <h2 th:text="${product.productName}">상품 이름</h2>
+            <p>가격: <span class="price" th:text="${product.productPrice}">0</span></p>
+            <p>평점: <span th:text="${product.productRate}">0.0</span></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

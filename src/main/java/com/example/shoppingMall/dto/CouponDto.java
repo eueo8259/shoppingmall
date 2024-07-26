@@ -11,5 +11,4 @@ public class CouponDto {
     private String code;
     private double discountRate;
     private int discountAmount;
-
 }
