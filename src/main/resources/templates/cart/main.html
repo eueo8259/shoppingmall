@@ -1,11 +1,125 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>장바구니</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .total-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .empty-cart-message {
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function updateQuantity(button, delta) {
+         var input = $(button).closest('.input-group').find('.quantity-input');
+         var currentQuantity = parseInt(input.val());
+         var newQuantity = currentQuantity + delta;
+         if (newQuantity < 1) newQuantity = 1;
+         input.val(newQuantity);
+         updatePrices();
+         }
+
+         function updatePrices() {
+             var total = 0;
+             $('tr[data-item-id]').each(function() {
+                 var price = parseFloat($(this).find('.product-price').text().replace(/₩|,/g, '')); // 원화 기호와 쉼표 제거
+                 var quantity = parseInt($(this).find('.quantity-input').val());
+                 var subtotal = price * quantity;
+                 $(this).find('.item-total').text(formatCurrency(subtotal));
+                 total += subtotal;
+             });
+             $('.total-price span').text(formatCurrency(total));
+         }
+
+         function formatCurrency(amount) {
+             if (amount === 0) return '₩0';
+             return '₩' + amount.toLocaleString('ko-KR');
+         }
+
+         $(document).ready(function() {
+             updatePrices();  // 페이지 로드 시 초기 가격 업데이트
+         });
+
+    </script>
 </head>
 <body>
-    <h3>장바구니메인페이지</h3>
-
+<div class="container" layout:fragment="content">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#" th:href="@{/}">홈</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}">장바구니</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="content">
+        <div th:if="${not #lists.isEmpty(cart)}">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th>상품명</th>
+                    <th>가격</th>
+                    <th>수량</th>
+                    <th>총 가격</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${cart}" data-item-id="${item.product.id}">
+                    <td th:text="${item.product.productName}">상품명</td>
+                    <td class="product-price" th:text="${item.product.productPrice}">가격</td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, -1)">-</button>
+                            </div>
+                            <input type="text" class="form-control quantity-input" th:value="${item.quantity}" readonly>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, 1)">+</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="item-total" th:text="${item.product.productPrice * item.quantity}">금액</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="total-price">
+                <p>총 가격: <span>0</span></p>
+            </div>
+        </div>
+        <div th:if="${#lists.isEmpty(cart)}">
+            <p class="empty-cart-message">장바구니가 비어 있습니다.</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

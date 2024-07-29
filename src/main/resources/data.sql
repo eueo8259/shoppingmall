@@ -14,12 +14,12 @@ VALUES
 ('5', '냉장고', '3', '40', 'EUR', '2024-07-11', '3',"판매","냉장고 입니다", "4"),
 ('6', '밥솥', '3', '40', 'EUR', '2024-07-11', '3',"판매","밥솥 입니다", "4");
 
-INSERT INTO product_img(img_code, product_code, img_url)
-VALUES
-('1', '1', "/productImg/main68dd774f-d82b-4f6c-9fa7-a9b501fa33fa.jpg"),
-('2', '1', "/productImg/subb78b2db2-6a01-4fc9-a97e-ff84e7ab71b3.jpg"),
-('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
-('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
+--INSERT INTO product_img(img_code, product_code, img_url)
+--VALUES
+--('1', '1', "/productImg/main68dd774f-d82b-4f6c-9fa7-a9b501fa33fa.jpg"),
+--('2', '1', "/productImg/subb78b2db2-6a01-4fc9-a97e-ff84e7ab71b3.jpg"),
+--('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
+--('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
 
 -- user 암호 1111
 INSERT INTO users (id, password, user_role) VALUES
@@ -49,11 +49,15 @@ VALUES
 ('2', '2' ,'4', '5','준비중', '2'),
 ('3', '3' ,'5', '6','배송완료', '3');
 
-INSERT INTO cart (cart_code, product_code, user_info_code, quantity)
+INSERT INTO cart (cart_code, product_code, id, quantity)
 VALUES
-('1', '1' ,'3','1'),
-('2', '2' ,'4','2'),
-('3', '3' ,'5','3');
+('1', '1', 'user1','1'),
+('2', '2', 'user2','2'),
+('3', '3', 'user3','3'),
+('4', '2', 'user1', '1'),
+('5', '1', 'user2', '1'),
+('6', '1', 'user3', '1');
+
 
 
 
