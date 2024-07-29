@@ -39,7 +39,16 @@
     <label>상품 수량</label>
     <input type="text" id="productQuantity" name="productQuantity" th:value="${productDto.productQuantity}"><br>
     <label>통화 명칭</label>
-    <input type="text" id="currency" name="currency" th:value="${productDto.currency}"><br>
+    <select id="currency" th:field="${productDto.currency}" name="currency">
+        <option disabled selected value="">상품의 통화명칭을</option>
+        <option value="USD"></option>
+        <option value="KRW"></option>
+        <option value="JPY"></option>
+        <option value="EUR"></option>
+        <option value="CNY"></option>
+        <option value="CAD"></option>
+        <option value="AUD"></option>
+    </select><br>
     <label>카테고리</label>
     <select id="location" th:field="${productDto.categoryCode}" name="location">
         <option disabled selected value="">상품의 카테고리를 선택해주세요</option>
