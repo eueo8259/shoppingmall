@@ -24,51 +24,89 @@
             margin-bottom: 0;
         }
         .total-price {
-            font-size: 1.2em;
+            font-size: 1.5em;
             font-weight: bold;
             margin-top: 20px;
+            text-align: right;
         }
         .empty-cart-message {
-            font-size: 1.2em;
+            font-size: 1.5em;
             color: #6c757d;
+            text-align: center;
+            margin-top: 50px;
         }
         .quantity-input {
             width: 60px;
             text-align: center;
         }
+        .position-relative {
+            position: relative;
+        }
+        .position-absolute {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
     </style>
     <script>
         function updateQuantity(button, delta) {
-         var input = $(button).closest('.input-group').find('.quantity-input');
-         var currentQuantity = parseInt(input.val());
-         var newQuantity = currentQuantity + delta;
-         if (newQuantity < 1) newQuantity = 1;
-         input.val(newQuantity);
-         updatePrices();
-         }
+            var input = $(button).closest('.input-group').find('.quantity-input');
+            var currentQuantity = parseInt(input.val());
+            var newQuantity = currentQuantity + delta;
+            if (newQuantity < 1) newQuantity = 1;
+            input.val(newQuantity);
+            updatePrices();
+        }
 
-         function updatePrices() {
-             var total = 0;
-             $('tr[data-item-id]').each(function() {
-                 var price = parseFloat($(this).find('.product-price').text().replace(/₩|,/g, '')); // 원화 기호와 쉼표 제거
-                 var quantity = parseInt($(this).find('.quantity-input').val());
-                 var subtotal = price * quantity;
-                 $(this).find('.item-total').text(formatCurrency(subtotal));
-                 total += subtotal;
-             });
-             $('.total-price span').text(formatCurrency(total));
-         }
+        function updatePrices() {
+            var total = 0;
+            $('.card').each(function() {
+                var price = parseFloat($(this).find('.product-price').text().replace(/₩|,/g, '')); // 원화 기호와 쉼표 제거
+                var quantity = parseInt($(this).find('.quantity-input').val());
+                var subtotal = price * quantity;
+                $(this).find('.item-total').text(formatCurrency(subtotal));
+                total += subtotal;
+            });
+            $('.total-price span').text(formatCurrency(total));
+        }
 
-         function formatCurrency(amount) {
-             if (amount === 0) return '₩0';
-             return '₩' + amount.toLocaleString('ko-KR');
-         }
+        function formatCurrency(amount) {
+            if (amount === 0) return '₩0';
+            return '₩' + amount.toLocaleString('ko-KR');
+        }
+        function removeItem(button) {
+            var card = $(button).closest('.col-md-4');
+            card.remove();
+            updatePrices();
+        }
 
-         $(document).ready(function() {
-             updatePrices();  // 페이지 로드 시 초기 가격 업데이트
-         });
-
+        $(document).ready(function() {
+            updatePrices();  // 페이지 로드 시 초기 가격 업데이트
+        });
     </script>
+
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -77,43 +115,43 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}">장바구니</a>
+                    <a class="nav-link" th:href="@{/cart}">🛒 장바구니</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="content">
         <div th:if="${not #lists.isEmpty(cart)}">
-            <table class="table table-bordered">
-                <thead class="thead-light">
-                <tr>
-                    <th>상품명</th>
-                    <th>가격</th>
-                    <th>수량</th>
-                    <th>총 가격</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item : ${cart}" data-item-id="${item.product.id}">
-                    <td th:text="${item.product.productName}">상품명</td>
-                    <td class="product-price" th:text="${item.product.productPrice}">가격</td>
-                    <td>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, -1)">-</button>
-                            </div>
-                            <input type="text" class="form-control quantity-input" th:value="${item.quantity}" readonly>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, 1)">+</button>
-                            </div>
+            <div class="row">
+                <div class="col-md-4" th:each="item : ${cart}" data-item-id="${item.product.id}">
+                    <div class="card mb-4">
+                        <div class="position-relative">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute" onclick="removeItem(this)">&times;</button>
                         </div>
-                    </td>
-                    <td class="item-total" th:text="${item.product.productPrice * item.quantity}">금액</td>
-                </tr>
-                </tbody>
-            </table>
+                        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${item.product.productName}"></h5>
+                            <p class="card-text">
+                                가격: <span class="product-price" th:text="${item.product.productPrice}">가격</span>원
+                            </p>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, -1)">-</button>
+                                </div>
+                                <input type="text" class="form-control quantity-input" th:value="${item.quantity}" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(this, 1)">+</button>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                총 가격: <span class="item-total" th:text="${item.product.productPrice * item.quantity}">금액</span>원
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="total-price">
-                <p>총 가격: <span>0</span></p>
+                <p>총 가격: <span>0</span>원</p>
             </div>
         </div>
         <div th:if="${#lists.isEmpty(cart)}">

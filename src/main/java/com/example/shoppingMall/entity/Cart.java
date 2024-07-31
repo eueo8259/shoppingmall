@@ -1,9 +1,6 @@
 package com.example.shoppingMall.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Cart {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartCode;
+
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Users user;
+    @JoinColumn(name = "userInfoCode")
+    private UserInfo userInfo;
 
     @ManyToOne
     @JoinColumn(name = "productCode")

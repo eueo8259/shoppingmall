@@ -17,7 +17,7 @@ public class CartDto {
     public static CartDto fromCartEntity(Cart cart){
         return new CartDto(
                 cart.getCartCode(),
-                cart.getUser().getId(),
+                cart.getUserInfo().getUser().getId(),
                 cart.getProduct().getProductName(),
                 cart.getQuantity()
         );

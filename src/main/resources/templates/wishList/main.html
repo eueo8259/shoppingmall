@@ -1,11 +1,123 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>위시리스트</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .navbar-brand, .nav-link {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .card-text strong {
+            display: inline-block;
+            width: 80px;
+        }
+        .empty-cart-message {
+            font-size: 1.5rem;
+            color: #888;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .btn-remove {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 0, 0, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            color: white;
+            font-size: 1rem;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .btn-remove:hover {
+            background-color: rgba(255, 0, 0, 1);
+        }
+    </style>
 </head>
 <body>
-    <h3>찜목록메인페이지</h3>
-
+<div class="container" layout:fragment="content">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#" th:href="@{/}">홈</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/wish}">❤ 위시리스트</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="content">
+        <div th:if="${not #lists.isEmpty(wish)}">
+            <div class="row">
+                <div class="col-md-4" th:each="item : ${wish}">
+                    <div class="card mb-4">
+                        <div class="position-relative">
+                            <button type="button" class="btn-remove" onclick="removeItem(this)">&times;</button>
+                        </div>
+                        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${item.product.productName}"></h5>
+                            <p class="card-text">
+                                <strong>가격:</strong> <span class="product-price" th:text="${item.product.productPrice}"></span>원
+                            </p>
+                            <p class="card-text">
+                                <strong>상태:</strong> <span class="product-status" th:text="${item.product.status}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>평점:</strong> <span class="product-rate" th:text="${item.product.productRate}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>설명:</strong> <span class="product-description" th:text="${item.product.description}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${#lists.isEmpty(wish)}">
+            <p class="empty-cart-message">위시리스트가 비어있습니다</p>
+        </div>
+    </div>
+</div>
+<!-- Optional JavaScript; choose one of the two! -->
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

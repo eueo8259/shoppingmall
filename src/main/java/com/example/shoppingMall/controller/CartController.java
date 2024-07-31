@@ -26,9 +26,7 @@ public class CartController {
         if(principal != null) {
             String user = principal.getName();
             List<Cart> cartList = cartService.findAll(user);
-            Long total = cartService.total(user);
             model.addAttribute("cart", cartList);
-
             log.info(cartList.toString());
             return "cart/main";
         }

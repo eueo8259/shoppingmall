@@ -22,7 +22,7 @@ public class CartService {
     EntityManager em;
 
     public List<Cart> findAll(String user) {
-        String sql = "SELECT c FROM Cart c WHERE c.user.id = :user";
+        String sql = "SELECT c FROM Cart c WHERE c.userInfo.user.id = :user";
         TypedQuery<Cart> query = em.createQuery(sql, Cart.class).setParameter("user", user);
         List<Cart> cart = null;
         try {
@@ -35,7 +35,7 @@ public class CartService {
     }
 
     public Long total(String user) {
-        String sql = "SELECT SUM(c.quantity) FROM Cart c WHERE c.user.id = :user";
+        String sql = "SELECT SUM(c.quantity) FROM Cart c WHERE c.userInfo.user.id = :user";
         TypedQuery<Long> query = em.createQuery(sql, Long.class).setParameter("user", user);
         return query.getSingleResult();
     }
