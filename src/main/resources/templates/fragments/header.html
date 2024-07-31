@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="header" th:fragment="header">
-    <header class="container d-flex align-items-center justify-content-between border-bottom" style="height: 100px;">
+    <header class="container d-flex align-items-center justify-content-between" style="height: 100px;">
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <div class="navbar-brand d-flex align-items-center">
@@ -60,11 +60,11 @@
                 <button class=" btn btn-outline-secondary me-2 btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" sec:authorize="isAuthenticated()">
                     <span style="font-size: 15px; font-weight: bold;">MY메뉴</span>
                 </button>
-                <a role="button" id="login" class="btn btn-outline-green me-2 btn-sm"
+                <a role="button" id="login" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
                    th:href="@{user/login}">로그인</a>
 
-                <a role="button" id="signUp" class="btn btn-outline-green me-2 btn-sm"
+                <a role="button" id="signUp" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
                    th:href="@{user/signUp}">회원가입</a>
 
@@ -99,6 +99,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">포인트관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{manage/userMng}">고객관리</a>
                         </li>
 <!--                        <li class="nav-item dropdown">-->
 <!--                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->

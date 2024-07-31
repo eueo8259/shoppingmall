@@ -28,6 +28,8 @@ public class UserInfo {
     @ManyToOne
     @JoinColumn(name = "id")
     private Users user;
+    @ColumnDefault("0")
+    private int currentPoint;
     @ColumnDefault("'Y'")
     private String isActive;
 }

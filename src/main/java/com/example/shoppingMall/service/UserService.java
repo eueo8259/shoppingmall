@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,5 +72,29 @@ public class UserService {
     public UserInfo findByUserId(String userId) {
         UserInfo userInfo = userInfoRepository.findByUserId(userId);
         return userInfo;
+    }
+
+    public String findUserId(String userName, String rrn, String phoneNumber) {
+        UserInfo userInfo = userInfoRepository.findByUserNameAndRRNAndPhoneNumber(userName, rrn, phoneNumber);
+        String userId = userInfo.getUser().getId();
+        return userId;
+    }
+
+    public String findUser(String id, String phoneNumber, String email) {
+        UserInfo userInfo = userInfoRepository.findByUser_IdAndPhoneNumberAndEmail(id, phoneNumber, email);
+        String userId = userInfo.getUser().getId();
+        return userId;
+    }
+
+    public String updatePw(String id, String updatePw) {
+        Optional<Users> findUser = userRepository.findById(id);
+        Users user = findUser.get();
+        user.setPassword(passwordEncoder.encode(updatePw));
+        userRepository.save(user);
+        return "OK";
+    }
+
+    public List<UserInfoDto> userListAll() {
+        return userInfoRepository.findAll().stream().map(x -> UserInfoDto.fromUserInfoEntity(x)).toList();
     }
 }
