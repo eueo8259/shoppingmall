@@ -38,12 +38,13 @@
         <img th:if="${productDto.mainImg}" th:src="@{${productDto.mainImg}}" alt="Main Image" class="visible">
     </div>
     <input type="file" id="fileInputMain" name="mainImage" accept="image/*" onchange="imgPreviewMain(event)"><br>
+
     <label>상품 코드</label>
-    <input type="text" id="productCode" name="productcode" th:value="${productDto.productCode}" disabled> <br>
+    <input type="text" id="productCode" name="productCode" th:value="${productDto.productCode}" readonly> <br>
     <label>상품 이름</label>
     <input type="text" id="productName" name="productName" th:value="${productDto.productName}"> <br>
     <label>상품 가격</label>
-    <input type="text" id="productPrice" name="productPrice" th:value="${productDto.originalPrice}"><br>
+    <input type="text" id="productPrice" name="originalPrice" th:value="${productDto.originalPrice}"><br>
     <label>상품 수량</label>
     <input type="text" id="productQuantity" name="productQuantity" th:value="${productDto.productQuantity}"><br>
     <label>통화 명칭</label>
@@ -57,7 +58,7 @@
         <option value="AUD">AUD</option>
     </select><br>
     <label>카테고리</label>
-    <select id="location" name="location">
+    <select id="location" name="location" th:field="${productDto.categoryCode}">
         <option selected value="">상품의 카테고리를 선택해주세요</option>
         <option th:each="categoryDtoList : ${categoryDtoList}"
                 th:value="${categoryDtoList.categoryCode}"
@@ -65,34 +66,28 @@
                 th:attr="data-rate=${productDto.categoryCode}"
         ></option>
     </select> <br>
-    <label>현재 판매 상태:</label>
-    <span th:text="${productDto.productStatus}"></span><br>
+    <label>판매 상태 변경</label>
+    <select th:field="${productDto.productStatus}">
+        <option value="대기">판매 신청</option>
+        <option value="종료">종료</option>
+    </select><br>
 
-    <label>판매 상태 변경 버튼</label>
     <input type="hidden" id="status" th:value="${productDto.productStatus}">
-    <button type="button" id="sell_apply" onclick="updateStatus('대기')">판매 신청</button>
-    <button type="button" id="sell_end" onclick="updateStatus('종료')">종료</button>
     <br>
     <label>상세 설명</label>
     <input type="text" id="description" name="description" th:value="${productDto.description}"><br>
 
-    <label>서브 이미지들</label>
-
-    <div class="preview-container" id="subImageContainer" th:each="subImg : ${productDto.imgList}">
+    <label>기존 서브 이미지들</label>
+    <div id="existingSubImages" class="preview-container" th:each="subImg : ${productDto.imgList}">
         <img th:src="@{${subImg}}" alt="Sub Image" class="visible">
     </div>
+    <div class="preview-container" id="subImageContainer"></div>
     <input type="file" id="fileInputSub" name="subImages" accept="image/*" multiple onchange="imgPreviewSub(event)"><br>
-
     <button type="submit" id="uploadButton">수정</button>
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    function updateStatus(newStatus) {
-    document.getElementById('status').value = newStatus;
-    alert("판매 상태 변경 완료.")
-    }
-
 
 function imgPreviewMain(event) {
     const input = event.target;

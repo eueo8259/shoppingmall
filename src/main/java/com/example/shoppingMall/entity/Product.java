@@ -31,7 +31,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "categoryCode")
     private Category category;
-    private String status;
+    private String status = "대기";
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImg> imgList = new ArrayList<>();
     private String description;

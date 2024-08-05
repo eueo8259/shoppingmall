@@ -54,6 +54,7 @@ public class ProductController {
     @GetMapping("product/update/{productCode}")
     public String productUpdateView(@PathVariable("productCode") Long productCode, Model model){
         ProductDto productDto = productService.findProductOne(productCode);
+
         model.addAttribute("productDto", productDto);
 
         List<CategoryDto> categoryDtoList = categoryService.findAll();
@@ -66,10 +67,10 @@ public class ProductController {
     public String productUpdate(@ModelAttribute("productDto")ProductDto productDto,
                          @RequestParam("mainImage") MultipartFile mainImg,
                          @RequestParam("subImages")List<MultipartFile> subImg) throws IOException {
-        UserInfoDto userInfoDto = userService.loginUserInfoDto();
-        productDto.setUserInfoCode(userInfoDto.getUserInfoCode());
-
-        productService.insertProduct(productDto, mainImg, subImg);
+        System.out.println("mainImg size =========================="+ mainImg.getSize());
+        System.out.println("subImg size =========================="+subImg.size());
+        productService.productUpdate(productDto, mainImg, subImg);
+        System.out.println("===================update메서드 종료========================");
         return "redirect:/seller/list";
     }
 

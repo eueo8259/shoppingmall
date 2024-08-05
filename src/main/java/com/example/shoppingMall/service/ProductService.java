@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,8 +24,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -51,9 +54,6 @@ public class ProductService {
 
     @Transactional
     public void insertProduct(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
-        String mainUrl = imageSaveDirectory(mainImg, "main");
-        List<String> subUrlList = imageSaveDirectoryList(subImg);
-        subUrlList.add(mainUrl);
 
         Product product = new Product();
         Category category = em.find(Category.class, productDto.getCategoryCode());
@@ -69,15 +69,20 @@ public class ProductService {
         product.setDescription(productDto.getDescription());
         product.setImgList(new ArrayList<>());
 
+        String mainUrl = imageSaveDirectory(mainImg, "main");
+        List<String> subUrlList = imageSaveDirectoryList(subImg);
+        subUrlList.add(mainUrl);
+
         for (String s : subUrlList){
             ProductImg productImg = new ProductImg();
             productImg.setProduct(product);
             productImg.setImgUrl(s);
             product.getImgList().add(productImg);
         }
+
         em.persist(product);
     }
-
+    
     @Transactional
     public List<ProductDto> printProduct(String categoryName) {
         String sql = "SELECT p FROM Product p WHERE p.category.categoryName = :categoryName";
@@ -92,20 +97,71 @@ public class ProductService {
         }
         return productDtoList;
     }
-
     @Transactional
-    public ProductDto findProductOne(Long productCode) {
-        Product product = em.find(Product.class, productCode);
-        ProductDto productDto = productDtoFromEntity(product);
-        return productDto;
+    public void productUpdate(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
+        Product product = em.find(Product.class, productDto.getProductCode());
+        Category category = em.find(Category.class, productDto.getCategoryCode());
+
+        product.setProductName(productDto.getProductName());
+        product.setProductQuantity(productDto.getProductQuantity());
+        product.setProductPrice(productDto.getOriginalPrice());
+        product.setCurrency(productDto.getCurrency());
+        product.setCategory(category);
+        product.setDescription(productDto.getDescription());
+        product.setStatus(productDto.getProductStatus());
+
+        if (!mainImg.isEmpty()){
+            System.out.println("================================main is not empty======================");
+            String newMainImgUrl = imageSaveDirectory(mainImg, "main");
+            List<ProductImg> productImgList = findProductList(productDto.getProductCode(), "main");
+
+            List<String> imgUrlList = productImgList.stream()
+                    .map(ProductImg::getImgUrl)
+                    .collect(Collectors.toList());
+
+            for (String s : imgUrlList){
+                deleteFile(s);
+            }
+            for (ProductImg p : productImgList){
+                p.setImgUrl(newMainImgUrl);
+            }
+        }
+        List<String> newSubImgUrlList = imageSaveDirectoryList(subImg);
+        String flag = null;
+        if (subImg.size() == 1){
+            for (String s : newSubImgUrlList){
+                flag = s;
+            }
+        }
+        if (flag != "empty") {
+            System.out.println("================================sub is not empty======================");
+            List<ProductImg> productImgList = findProductList(productDto.getProductCode(), "sub");
+            if (!productImgList.isEmpty()) {
+                List<String> imgUrlList = productImgList.stream()
+                        .map(ProductImg::getImgUrl)
+                        .collect(Collectors.toList());
+
+                for (String s : imgUrlList) {
+                    deleteFile(s);
+                }
+                for (ProductImg p : productImgList) {
+                    em.remove(p);
+                }
+            }
+            for (String s : newSubImgUrlList) {
+                ProductImg productImg = new ProductImg();
+                productImg.setProduct(product);
+                productImg.setImgUrl(s);
+                product.getImgList().add(productImg);
+            }
+        }
+        em.merge(product);
     }
 
-
-
-    public String imageSaveDirectory(MultipartFile file, String imgName) throws IOException {
+    public String imageSaveDirectory(MultipartFile file, String fileName) throws IOException {
 
         if (file.isEmpty()) {
-            throw new IllegalStateException("Cannot store empty file.");
+            return "empty";
         }
 
         String originalFilename = file.getOriginalFilename();
@@ -116,7 +172,7 @@ public class ProductService {
             extension = originalFilename.substring(i);
         }
 
-        String newFilename = imgName + UUID.randomUUID().toString() + extension;
+        String newFilename = fileName + UUID.randomUUID().toString() + extension;
         Path filePath = Paths.get(fileDir, newFilename).normalize(); // 상대 경로 정규화
 
         // 디렉토리가 없으면 생성
@@ -126,23 +182,41 @@ public class ProductService {
 
         Files.copy(file.getInputStream(), filePath);
 
-        // 저장된 파일의 경로를 로그에 출력
-//        System.out.println("File saved to: " + filePath.toAbsolutePath());
-
-        // 상대 경로를 웹 경로로 변환하여 반환
         return fileUrl+ "/" + newFilename;
     }
 
     public List<String> imageSaveDirectoryList(List<MultipartFile> files) throws IOException {
+
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile file : files) {
             String filePath = imageSaveDirectory(file, "sub");
             filePaths.add(filePath);
-
         }
 
         return filePaths;
     }
+
+    public void deleteFile(String relativeFilePath) throws IOException {
+
+        String relativePath = relativeFilePath.replace("/productImg/", "");
+        Path filePath = Paths.get(fileDir, relativePath).normalize();
+
+        // 파일이 존재하는지 확인
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+        } else {
+            throw new FileNotFoundException("File not found: " + filePath.toAbsolutePath());
+        }
+    }
+
+    public List<ProductImg> findProductList(Long productCode, String keyword){
+        String sql = "SELECT p FROM ProductImg p WHERE p.product.productCode = :productCode AND p.imgUrl LIKE :keyword";
+        TypedQuery<ProductImg> query = em.createQuery(sql, ProductImg.class);
+        query.setParameter("productCode", productCode);
+        query.setParameter("keyword", "%" + keyword + "%"); // `%`를 파라미터에서 조합
+        return query.getResultList();
+    }
+
     @Transactional
     public List<ProductDto> findMyProductList(Long userInfoCode) {
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -188,8 +262,6 @@ public class ProductService {
         return productDto;
     }
 
-
-
     @Transactional
     public List<Category> categoryList() {
         String sql = "SELECT c FROM Category c";
@@ -197,4 +269,13 @@ public class ProductService {
         List<Category> categoryList = query.getResultList();
         return categoryList;
     }
+
+    @Transactional
+    public ProductDto findProductOne(Long productCode) {
+        Product product = em.find(Product.class, productCode);
+        ProductDto productDto = productDtoFromEntity(product);
+        return productDto;
+    }
+
+
 }

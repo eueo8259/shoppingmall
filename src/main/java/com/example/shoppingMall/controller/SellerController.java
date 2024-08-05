@@ -10,6 +10,8 @@ import com.example.shoppingMall.entity.Users;
 import com.example.shoppingMall.service.CategoryService;
 import com.example.shoppingMall.service.ProductService;
 import com.example.shoppingMall.service.UserService;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,7 @@ public class SellerController {
 
 
     @GetMapping("insert")
+    @PreAuthorize("hasRole('ROLE_SELLER') or hasRole('ROLE_ADMIN')")
     public String productInsert(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -69,7 +72,7 @@ public class SellerController {
 
         productDto.setUserInfoCode(userInfoDto.getUserInfoCode());
         productService.insertProduct(productDto, mainImg, subImg);
-        return "redirect:/seller/insert";
+        return "redirect:/seller/list";
     }
 
     @GetMapping("list")

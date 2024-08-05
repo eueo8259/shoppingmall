@@ -34,9 +34,7 @@ VALUES
 INSERT INTO product_img(img_code, product_code, img_url)
 VALUES
 ('1', '1', "/productImg/main68dd774f-d82b-4f6c-9fa7-a9b501fa33fa.jpg"),
-('2', '1', "/productImg/subb78b2db2-6a01-4fc9-a97e-ff84e7ab71b3.jpg"),
-('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
-('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
+('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg");
 
 INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name)
 VALUES
