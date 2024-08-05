@@ -29,13 +29,13 @@ INSERT INTO users (id, password, user_role) VALUES
 ('user3', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'USER'),
 ('seller', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'SELLER');
 
-INSERT INTO user_info (user_info_code, user_name ,RRN, phone_number, created_date, email,birth_date, grade, id , is_active)
+INSERT INTO user_info (user_info_code, user_name ,RRN, phone_number, created_date, email,birth_date, grade, id , is_active, current_point)
 VALUES
-('1', '가' ,'990708-0000000','010-1111-1111','2024-07-11', 'a@zzzz.com','1999-07-08','일반','admin','Y'),
-('2', '다' ,'990728-2222222','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-07-28','일반','seller','Y'),
-('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1','Y'),
-('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2','Y'),
-('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3','Y');
+('1', '가' ,'990708-0000000','010-1111-1111','2024-07-11', 'a@zzzz.com','1999-07-08','일반','admin','Y', 0),
+('2', '다' ,'990728-2222222','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-07-28','일반','seller','Y', 0),
+('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1','Y', 0),
+('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2','Y', 0),
+('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3','Y', 0);
 
 INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name)
 VALUES

@@ -139,7 +139,7 @@ public class ProductService {
         return filePaths;
     }
 
-    private ProductDto productDtoFromEntity(Product product) {
+    public ProductDto productDtoFromEntity(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setProductCode(product.getProductCode());
         productDto.setProductName(product.getProductName());

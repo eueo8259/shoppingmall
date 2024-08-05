@@ -7,10 +7,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService {
@@ -34,9 +36,17 @@ public class CartService {
         return cart;
     }
 
-    public Long total(String user) {
-        String sql = "SELECT SUM(c.quantity) FROM Cart c WHERE c.userInfo.user.id = :user";
-        TypedQuery<Long> query = em.createQuery(sql, Long.class).setParameter("user", user);
-        return query.getSingleResult();
+
+    @Transactional
+    public void updateQuantity(Long itemId, int quantity) {
+        Cart cart = cartRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Invalid item ID: " + itemId));
+        cart.setQuantity(quantity);
+        cartRepository.save(cart); // 변경된 수량을 저장
+
+        
+    }
+    @Transactional
+    public void removeItem(Long itemId) {
+        cartRepository.deleteById(itemId);
     }
 }
