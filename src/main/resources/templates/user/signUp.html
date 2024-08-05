@@ -61,7 +61,7 @@
         </div>
         <hr>
         <p class="header-title">회원가입</p>
-        <form th:action="@{/user/signUp}" method="post" th:object="${userInfoDto}" id="frm">
+        <form th:action="@{/signUp}" method="post" th:object="${userInfoDto}" id="frm">
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                 <input type="text" class="form-control" placeholder="아이디" id="id" name="id" th:field="*{user.id}" aria-label="Username" aria-describedby="basic-addon2">

@@ -7,14 +7,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class userPoint {
+public class UserPoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pointId;
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Users user;
+    @JoinColumn(name = "userInfoCode")
+    private UserInfo userInfo;
     private LocalDateTime occurDate;
     private int chargePoint;
     private int usePoint;
+    private String remarks;
 }

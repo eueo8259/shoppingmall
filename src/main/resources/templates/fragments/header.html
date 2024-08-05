@@ -62,13 +62,13 @@
                 </button>
                 <a role="button" id="login" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{user/login}">로그인</a>
+                   th:href="@{/login}">로그인</a>
 
                 <a role="button" id="signUp" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{user/signUp}">회원가입</a>
+                   th:href="@{/signUp}">회원가입</a>
 
-                <a role="button" id="loginout" class="btn btn-outline-secondary me-2 btn-sm"
+                <a role="button" id="logout" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="isAuthenticated()"
                    th:href="@{/logout}">로그아웃</a>
             </div>
@@ -92,15 +92,15 @@
                             <a class="nav-link" href="#">주문내역</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">배송지관리</a>
+                            <a class="nav-link" th:href="@{delivery/deliveryList}">배송지관리</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">쿠폰내역</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">포인트관리</a>
+                            <a class="nav-link" th:href="@{point/pointList}">포인트관리</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" th:if="${userRole == 'ROLE_ADMIN'}">
                             <a class="nav-link" th:href="@{manage/userMng}">고객관리</a>
                         </li>
 <!--                        <li class="nav-item dropdown">-->

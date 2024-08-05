@@ -29,19 +29,20 @@ INSERT INTO users (id, password, user_role) VALUES
 ('user3', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'USER'),
 ('seller', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'SELLER');
 
-INSERT INTO user_info (user_info_code, user_name ,RRN, phone_number, created_date, email,birth_date, grade, id , is_active)
+INSERT INTO user_info (user_info_code, user_name ,RRN, phone_number, created_date, email, birth_date, grade, id, current_point, is_active)
 VALUES
-('1', '가' ,'990708-0000000','010-1111-1111','2024-07-11', 'a@zzzz.com','1999-07-08','일반','admin','Y'),
-('2', '다' ,'990728-2222222','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-07-28','일반','seller','Y'),
-('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1','Y'),
-('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2','Y'),
-('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3','Y');
+('1', '가' ,'990708-0000000','010-1111-1111','2024-07-11', 'a@zzzz.com','1999-07-08','일반','admin', 0, 'Y'),
+('2', '다' ,'990728-2222222','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-07-28','일반','seller', 0, 'Y'),
+('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1', 5200, 'Y'),
+('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2', 0, 'Y'),
+('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3', 0, 'Y');
 
-INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name)
+INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name, default_yn)
 VALUES
-('3', '1' ,'000000','서울', '010-1111-1111','가'),
-('4', '2' ,'111111','인천', '010-1111-2222','나'),
-('5', '3' ,'222222','부산', '010-1111-3333','다');
+('3', '1' ,'00000','서울', '010-1111-1111','가', 'Y'),
+('4', '2' ,'11111','인천', '010-1111-2222','나', 'Y'),
+('5', '3' ,'22222','부산', '010-1111-3333','다', 'Y'),
+('3', '4' ,'10414','경기도 고양시 일산동구 중앙로 1193', '010-1111-1111','가', 'N');
 
 INSERT INTO orders (order_code, product_code, user_info_code, order_quantity, order_status, delivery_code)
 VALUES
@@ -55,5 +56,10 @@ VALUES
 ('2', '2' ,'4','2'),
 ('3', '3' ,'5','3');
 
+INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
+VALUES
+(1, 3 ,'2024-08-05 09:00:00', 30000, 0, '포인트충전'),
+(2, 3 ,'2024-08-05 09:15:00', 0, 35000, '주문번호:test1111'),
+(3, 3 ,'2024-08-05 09:20:00', 200, 0, '리뷰이벤트적립금');
 
 

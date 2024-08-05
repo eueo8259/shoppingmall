@@ -1,5 +1,6 @@
 package com.example.shoppingMall.service;
 
+import com.example.shoppingMall.constant.UserRole;
 import com.example.shoppingMall.dto.UserDto;
 import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.entity.UserInfo;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -95,6 +97,28 @@ public class UserService {
     }
 
     public List<UserInfoDto> userListAll() {
-        return userInfoRepository.findAll().stream().map(x -> UserInfoDto.fromUserInfoEntity(x)).toList();
+        return userInfoRepository.findAll().stream().map(x -> UserInfoDto.fromUserInfoEntity(x))
+                .filter(userInfoDto -> userInfoDto.getUser().getUserRole() != UserRole.ADMIN)
+                .collect(Collectors.toList());
+    }
+
+    public String findUserRole(String username) {
+        Optional<Users> findUser = userRepository.findById(username);
+        String userRole = findUser.get().getUserRole().getValue();
+        return userRole;
+    }
+
+    public void updateUserRole(String userId, String userRole) {
+        Optional<Users> findUser = userRepository.findById(userId);
+        UserRole role = UserRole.valueOf(userRole);
+        findUser.get().setUserRole(role);
+        Users users = findUser.get();
+        userRepository.save(users);
+    }
+
+    public void updateIsActive(String userId, String isActive) {
+        UserInfo findUserInfo = userInfoRepository.findByUserId(userId);
+        findUserInfo.setIsActive(isActive);
+        userInfoRepository.save(findUserInfo);
     }
 }

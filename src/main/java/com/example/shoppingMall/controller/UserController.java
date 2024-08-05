@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/user")
 @Slf4j
 public class UserController {
     @Autowired
@@ -54,7 +53,7 @@ public class UserController {
         return "user/login";
     }
 
-    @PostMapping("/findId")
+    @PostMapping("/user/findId")
     @ResponseBody
     public Map<String, String> findId(@RequestParam("userName") String userName,
                                        @RequestParam("RRN") String rrn,
@@ -70,7 +69,7 @@ public class UserController {
         return data;
     }
 
-    @PostMapping("/findPw")
+    @PostMapping("/user/findPw")
     @ResponseBody
     public Map<String, String> findPw(@RequestParam("id") String id,
                                       @RequestParam("phoneNumber") String phoneNumber,
@@ -86,7 +85,7 @@ public class UserController {
         return data;
     }
 
-    @PostMapping("/updatePw")
+    @PostMapping("/user/updatePw")
     @ResponseBody
     public Map<String, String> updatePw(@RequestParam("id") String id,
                                         @RequestParam("updatePw") String updatePw) {
