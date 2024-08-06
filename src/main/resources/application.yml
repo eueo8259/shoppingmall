@@ -10,7 +10,7 @@ spring:
     password: 1111
 
   servlet:
-     multipart:
+    multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
@@ -21,7 +21,6 @@ spring:
   jpa:
     defer-datasource-initialization: true
     hibernate:
-
       ddl-auto: create
 
     properties:

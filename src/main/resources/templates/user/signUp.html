@@ -61,7 +61,7 @@
         </div>
         <hr>
         <p class="header-title">회원가입</p>
-        <form th:action="@{/user/signUp}" method="post" th:object="${userInfoDto}">
+        <form th:action="@{/signUp}" method="post" th:object="${userInfoDto}" id="frm">
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                 <input type="text" class="form-control" placeholder="아이디" id="id" name="id" th:field="*{user.id}" aria-label="Username" aria-describedby="basic-addon2">
@@ -70,11 +70,12 @@
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" placeholder="비밀번호" id="password" name="password" th:field="*{user.password}" aria-label="Username" aria-describedby="basic-addon1">
+                <input type="password" class="form-control" placeholder="비밀번호" id="password" name="password" th:field="*{user.password}" aria-label="password" aria-describedby="basic-addon1">
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="password" class="form-control" placeholder="비밀번호 확인" id="password2" name="password2" aria-label="Username" aria-describedby="basic-addon1">
+                <input type="password" class="form-control" placeholder="비밀번호 확인" id="password2" name="password2" aria-label="password2" aria-describedby="basic-addon1">
+                <span id="passwordError" class="error" style="font-size: 12px; text-align: center; color: red; margin: auto;"></span>
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
@@ -82,14 +83,14 @@
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-vcard-fill"></i></span>
-                <input type="text" class="form-control" placeholder="생년월일" id=birth aria-label="Birth" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" placeholder="생년월일" id=birth aria-label="Birth" aria-describedby="basic-addon1" name="birth">
                 <span class="input-group-text">-</span>
-                <input type="password" class="form-control" placeholder="뒷자리 7자리" id=rrn2 aria-label="rrn">
+                <input type="password" class="form-control" placeholder="뒷자리 7자리" id=rrn2 aria-label="rrn" aria-describedby="basic-addon1">
                 <input type="hidden" id="RRN" name="RRN" th:field="*{RRN}">
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-phone"></i></span>
-                <input type="text"class="form-control" placeholder="휴대폰번호" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}" aria-label="Username" aria-describedby="basic-addon1">
+                <input type="text"class="form-control" placeholder="휴대폰번호( '-' 포함 13자리 입력)" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}" aria-label="Username" aria-describedby="basic-addon1">
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
@@ -99,19 +100,19 @@
                 <input type="hidden" id="email" name="email" th:field="*{email}">
             </div>
             <div>
-                <input  type="checkbox" value="" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
+                <input  type="checkbox" value="" id="agreement1">
+                <label class="form-check-label" for="agreement1">
                     [필수] 만 14세 이상입니다.
                 </label>
             </div>
             <div >
-                <input type="checkbox" value="" id="flexCheckChecked">
-                <label class="form-check-label" for="flexCheckChecked">
+                <input type="checkbox" value="" id="agreement2">
+                <label class="form-check-label" for="agreement2">
                     [필수] 개인정보 수집 및 이용 동의
                 </label>
             </div>
             <div class="button-group">
-                <button type="submit" class="btn btn-outline-success me-2 btn-sm">동의하고 가입하기</button>
+                <button type="button" id="signUp" class="btn btn-outline-success me-2 btn-sm">동의하고 가입하기</button>
                 <a th:href="@{/}" class="btn btn-outline-secondary me-2 btn-sm">이전 화면으로 돌아가기</a>
             </div>
         </form>

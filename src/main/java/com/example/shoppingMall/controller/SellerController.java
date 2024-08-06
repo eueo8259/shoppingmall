@@ -41,27 +41,11 @@ public class SellerController {
     @GetMapping("insert")
     @PreAuthorize("hasRole('ROLE_SELLER') or hasRole('ROLE_ADMIN')")
     public String productInsert(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
 
-            PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
-            //일단 이렇게 처리하고 나중에 @Secured 어노테이션 사용해보자
-            // 여기서 userDetails에서 사용자 정보 추출
-            Users user = userDetails.getUsers();
-            String id = user.getId();
-            UserDto userDto = userService.getOneUser(id);
-
-            if (userDto.getUserRole() == UserRole.SELLER){
-                List<CategoryDto> categoryDtoList = categoryService.findAll();
-                model.addAttribute("categoryDtoList", categoryDtoList);
-                model.addAttribute("productDto", new ProductDto());
-                return "seller/insert";
-            }else {
-                return "redirect:/";
-            }
-        } else {
-            return "/user/login";
-        }
+        List<CategoryDto> categoryDtoList = categoryService.findAll();
+        model.addAttribute("categoryDtoList", categoryDtoList);
+        model.addAttribute("productDto", new ProductDto());
+        return "seller/insert";
     }
 
     @PostMapping("insert")
@@ -76,6 +60,7 @@ public class SellerController {
     }
 
     @GetMapping("list")
+    @PreAuthorize("hasRole('ROLE_SELLER') or hasRole('ROLE_ADMIN')")
     public String productList(Model model) {
         UserInfoDto userInfoDto = userService.loginUserInfoDto();
         List<ProductDto> productDtoList = productService.findMyProductList(userInfoDto.getUserInfoCode());

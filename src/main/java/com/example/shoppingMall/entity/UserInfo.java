@@ -23,11 +23,10 @@ public class UserInfo {
     private LocalDate birthDate;
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
-    @ColumnDefault("'일반'")
-    private String grade;
+    private String grade ="일반";
     @ManyToOne
     @JoinColumn(name = "id")
     private Users user;
-    @ColumnDefault("'Y'")
-    private String isActive;
+    private int currentPoint = 0;
+    private String isActive = "Y";
 }

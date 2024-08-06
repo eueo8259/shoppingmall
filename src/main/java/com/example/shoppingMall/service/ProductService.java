@@ -12,6 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,10 +27,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Data
@@ -82,7 +85,7 @@ public class ProductService {
 
         em.persist(product);
     }
-    
+
     @Transactional
     public List<ProductDto> printProduct(String categoryName) {
         String sql = "SELECT p FROM Product p WHERE p.category.categoryName = :categoryName";
@@ -113,7 +116,7 @@ public class ProductService {
         if (!mainImg.isEmpty()){
             System.out.println("================================main is not empty======================");
             String newMainImgUrl = imageSaveDirectory(mainImg, "main");
-            List<ProductImg> productImgList = findProductList(productDto.getProductCode(), "main");
+            List<ProductImg> productImgList = findProductImgList(productDto.getProductCode(), "main");
 
             List<String> imgUrlList = productImgList.stream()
                     .map(ProductImg::getImgUrl)
@@ -135,7 +138,7 @@ public class ProductService {
         }
         if (flag != "empty") {
             System.out.println("================================sub is not empty======================");
-            List<ProductImg> productImgList = findProductList(productDto.getProductCode(), "sub");
+            List<ProductImg> productImgList = findProductImgList(productDto.getProductCode(), "sub");
             if (!productImgList.isEmpty()) {
                 List<String> imgUrlList = productImgList.stream()
                         .map(ProductImg::getImgUrl)
@@ -191,6 +194,7 @@ public class ProductService {
         for (MultipartFile file : files) {
             String filePath = imageSaveDirectory(file, "sub");
             filePaths.add(filePath);
+
         }
 
         return filePaths;
@@ -209,7 +213,7 @@ public class ProductService {
         }
     }
 
-    public List<ProductImg> findProductList(Long productCode, String keyword){
+    public List<ProductImg> findProductImgList(Long productCode, String keyword){
         String sql = "SELECT p FROM ProductImg p WHERE p.product.productCode = :productCode AND p.imgUrl LIKE :keyword";
         TypedQuery<ProductImg> query = em.createQuery(sql, ProductImg.class);
         query.setParameter("productCode", productCode);
@@ -278,4 +282,48 @@ public class ProductService {
     }
 
 
+
+//    public Page<ProductDto> getProductsAwaitingApproval(Pageable pageable) {
+//        Page<Product> productPage = productRepository.getProductsAwaitingApproval(pageable);
+//
+//        List<ProductDto> productDtoList = productPage.getContent().stream()
+//                .map(this::productDtoFromEntity)
+//                .collect(Collectors.toList());
+//
+//        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+//
+//    }
+
+    public Page<ProductDto> getProductAllList(Pageable pageable) {
+        Page<Product> productPage = productRepository.getProductsList(pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+    }
+
+
+    private static final int BAR_LENGTH=5;
+
+    public List<Integer> getPaginationBarNumbers(int pageNumber, int totalPage) {
+        int startNumber = Math.max(pageNumber-(BAR_LENGTH/2),0);
+
+        int endNumber = Math.min(startNumber + BAR_LENGTH, totalPage);
+
+        return IntStream.range(startNumber,endNumber).boxed().toList();
+
+    }
+    @Transactional
+    public void productApprove(Long productCode) {
+        Product product = em.find(Product.class, productCode);
+        product.setStatus("판매");
+        em.merge(product);
+    }
+    @Transactional
+    public void productDelete(Long productCode) {
+        Product product = em.find(Product.class, productCode);
+        em.remove(product);
+    }
 }

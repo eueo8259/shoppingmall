@@ -1,7 +1,4 @@
 package com.example.shoppingMall.dto;
-import com.example.shoppingMall.entity.Product;
-import com.example.shoppingMall.entity.ProductImg;
-import com.example.shoppingMall.entity.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +27,4 @@ public class ProductDto {
     private List<String> imgList = new ArrayList<>();
     private String description;
     private double productRate; //평점
-
 }

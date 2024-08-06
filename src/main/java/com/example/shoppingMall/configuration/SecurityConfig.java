@@ -30,7 +30,7 @@ public class SecurityConfig {
                 )
 
                 .formLogin((form)->form
-                        .loginPage("/user/login") // 로그인 페이지 URL
+                        .loginPage("/login") // 로그인 페이지 URL
                         .loginProcessingUrl("/login") // 로그인 처리 URL
                         .defaultSuccessUrl("/", true)
                         .permitAll()

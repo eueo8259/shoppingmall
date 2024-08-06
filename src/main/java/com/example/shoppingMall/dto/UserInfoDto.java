@@ -21,9 +21,10 @@ public class UserInfoDto {
     private LocalDate createdDate;
     private String email;
     private LocalDate birthDate;
-//    private List<Delivery> deliveryList = new ArrayList<>(); 양방향 매핑인데 필요한지 모르겠음 나중에 수정하는걸로하고 일단 주석처리
+    //    private List<Delivery> deliveryList = new ArrayList<>(); 양방향 매핑인데 필요한지 모르겠음 나중에 수정하는걸로하고 일단 주석처리
     private String grade;
     private Users user;
+    private int currentPoint;
     private String isActive;
 
     public static UserInfoDto fromUserInfoEntity(UserInfo userInfo) {
@@ -37,6 +38,7 @@ public class UserInfoDto {
                 userInfo.getBirthDate(),
                 userInfo.getGrade(),
                 userInfo.getUser(),
+                userInfo.getCurrentPoint(),
                 userInfo.getIsActive()
         );
     }
@@ -48,8 +50,10 @@ public class UserInfoDto {
         info.setPhoneNumber(dto.getPhoneNumber());
         info.setCreatedDate(dto.getCreatedDate());
         info.setEmail(dto.getEmail());
+        info.setBirthDate(dto.getBirthDate());
         info.setGrade(dto.getGrade());
         info.setUser(dto.getUser());
+        info.setCurrentPoint(dto.getCurrentPoint());
         info.setIsActive(dto.getIsActive());
         return info;
     }

@@ -8,6 +8,7 @@ import com.example.shoppingMall.service.CategoryService;
 import com.example.shoppingMall.service.ExchangeService;
 import com.example.shoppingMall.service.ProductService;
 import com.example.shoppingMall.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,7 @@ public class ProductController {
     }
 
     @GetMapping("product/update/{productCode}")
+    @PreAuthorize("hasRole('ROLE_SELLER') or hasRole('ROLE_ADMIN')")
     public String productUpdateView(@PathVariable("productCode") Long productCode, Model model){
         ProductDto productDto = productService.findProductOne(productCode);
 
