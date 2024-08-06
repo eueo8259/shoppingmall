@@ -26,6 +26,7 @@ public class ProductController {
         this.productService = productService;
         this.categoryService = categoryService;
     }
+
     @GetMapping("test")
     public String test(Model model){
         List<Category> categoryList = productService.test();
@@ -47,21 +48,6 @@ public class ProductController {
         return "product/detail";
     }
 
-    @GetMapping("product/insert")
-    public String productInsert(Model model){
-        List<CategoryDto> categoryDtoList = categoryService.findAll();
-        model.addAttribute("categoryDtoList", categoryDtoList);
-        model.addAttribute("productDto", new ProductDto());
-        return "product/insert";
-    }
-
-    @PostMapping("product/insert")
-    public String insert(@ModelAttribute("productDto")ProductDto productDto,
-                         @RequestParam("mainImage") MultipartFile mainImg,
-                         @RequestParam("subImages")List<MultipartFile> subImg) throws IOException {
-        productService.insertProduct(productDto, mainImg, subImg);
-        return "redirect:/product/insert";
-    }
 
 
 

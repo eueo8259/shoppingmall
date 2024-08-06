@@ -56,7 +56,7 @@
                 <span sec:authorize="isAuthenticated()" style="font-size: 17px; font-weight: bold;" th:text="${username + '님　'}"></span>
                 <a role="button" id="profile" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="isAuthenticated()"
-                   th:href="@{/}">&nbsp;<i class="bi bi-cart" style="font-size: 15px;  font-weight: bold;"></i>&nbsp; </a>
+                   th:href="@{/cart}">&nbsp;<i class="bi bi-cart" style="font-size: 15px;  font-weight: bold;"></i>&nbsp; </a>
                 <button class=" btn btn-outline-secondary me-2 btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" sec:authorize="isAuthenticated()">
                     <span style="font-size: 15px; font-weight: bold;">MY메뉴</span>
                 </button>
@@ -86,7 +86,7 @@
                             <a class="nav-link active" aria-current="page" href="#">장바구니</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">위시리스트</a>
+                            <a class="nav-link" th:href="@{/wish}">위시리스트</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">주문내역</a>

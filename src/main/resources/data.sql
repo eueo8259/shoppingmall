@@ -50,11 +50,30 @@ VALUES
 ('2', '2' ,'4', '5','준비중', '2'),
 ('3', '3' ,'5', '6','배송완료', '3');
 
-INSERT INTO cart (cart_code, product_code, user_info_code, quantity)
+INSERT INTO cart (product_code, user_info_code, quantity)
 VALUES
-('1', '1' ,'3','1'),
-('2', '2' ,'4','2'),
-('3', '3' ,'5','3');
+('1', '3','1'),
+('2', '4','2'),
+('3', '5','3'),
+('2', '3', '1'),
+('1', '4', '1'),
+('1', '5', '1');
+
+INSERT INTO wish_list (product_code, user_info_code)
+VALUES
+('1','3'),
+('2','3'),
+('3','3'),
+('1','4'),
+('3','4'),
+('4','4'),
+('5','4'),
+('1','5'),
+('3','5'),
+('6','5'),
+('2','5');
+
+
 
 INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
 VALUES
