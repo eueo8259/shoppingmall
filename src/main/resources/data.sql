@@ -1,32 +1,3 @@
-INSERT INTO category (category_code, category_name)
-VALUES
-('1', '전자제품'),
-('2', '음식'),
-('3', '가전제품');
-
-INSERT INTO product (product_code, product_name, product_price, product_quantity, currency, product_register_date
-, category_code, status, description, product_rate)
-VALUES
-('1', '컴퓨터', '7233', '50', 'USD', '2024-07-11', '1',"판매","컴퓨터 입니다", "4"),
-('2', 'TV', '3', '40', 'EUR', '2024-07-11', '1',"판매","TV 입니다", "4"),
-('3', '사과 2개', '3', '40', 'EUR', '2024-07-11', '2',"판매","사과 입니다", "4"),
-('4', '달걀 1판', '3', '40', 'EUR', '2024-07-11', '2',"판매","달걀 입니다", "4"),
-('5', '냉장고', '3', '40', 'EUR', '2024-07-11', '3',"판매","냉장고 입니다", "4"),
-('6', '밥솥', '3', '40', 'EUR', '2024-07-11', '3',"판매","밥솥 입니다", "4"),
-('7', '냉장고1', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4"),
-('8', '냉장고2', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4"),
-('9', '냉장고3', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4"),
-('10', '냉장고4', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4"),
-('11', '냉장고5', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4"),
-('12', '냉장고6', '3', '40', 'EUR', '2024-07-11', '3',"대기","냉장고 입니다", "4");
-
-INSERT INTO product_img(img_code, product_code, img_url)
-VALUES
-('1', '1', "/productImg/main68dd774f-d82b-4f6c-9fa7-a9b501fa33fa.jpg"),
-('2', '1', "/productImg/subb78b2db2-6a01-4fc9-a97e-ff84e7ab71b3.jpg"),
-('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
-('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
-
 -- user 암호 1111
 INSERT INTO users (id, password, user_role) VALUES
 ('admin', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'ADMIN'),
@@ -42,6 +13,37 @@ VALUES
 ('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1', 5200, 'Y'),
 ('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2', 0, 'Y'),
 ('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3', 0, 'Y');
+
+
+INSERT INTO category (category_code, category_name)
+VALUES
+('1', '전자제품'),
+('2', '음식'),
+('3', '가전제품');
+
+
+INSERT INTO product (product_code, product_name, product_price, product_quantity, currency, product_register_date
+, category_code, status, description, product_rate, user_info_code)
+VALUES
+('1', '컴퓨터', '7233', '50', 'USD', '2024-07-11', '1',"판매","컴퓨터 입니다", "4", "2"),
+('2', 'TV', '3', '40', 'EUR', '2024-07-11', '1',"판매","TV 입니다", "4", "2"),
+('3', '사과 2개', '3', '40', 'EUR', '2024-07-11', '1',"판매","사과 입니다", "4", "2"),
+('4', '달걀 1판', '3', '40', 'EUR', '2024-07-11', '1',"판매","달걀 입니다", "4", "2"),
+('5', '냉장고', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('6', '밥솥', '3', '40', 'EUR', '2024-07-11', '1',"판매","밥솥 입니다", "4", "2"),
+('7', '전자렌지', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('8', '코카콜라', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('9', '에어컨', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('10', '냉장고4', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('11', '거울', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2"),
+('12', '선풍기', '3', '40', 'EUR', '2024-07-11', '1',"판매","냉장고 입니다", "4", "2");
+
+INSERT INTO product_img(img_code, product_code, img_url)
+VALUES
+('1', '1', "/productImg/main68dd774f-d82b-4f6c-9fa7-a9b501fa33fa.jpg"),
+('2', '1', "/productImg/subb78b2db2-6a01-4fc9-a97e-ff84e7ab71b3.jpg"),
+('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
+('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
 
 INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name, default_yn)
 VALUES
@@ -59,11 +61,11 @@ VALUES
 INSERT INTO cart (product_code, user_info_code, quantity)
 VALUES
 ('1', '3','1'),
-('2', '4','2'),
-('3', '5','3'),
-('2', '3', '1'),
-('1', '4', '1'),
-('1', '5', '1');
+('2', '3','2'),
+('4', '3','3'),
+('5', '3', '1'),
+('6', '3', '1'),
+('7', '3', '1');
 
 INSERT INTO wish_list (product_code, user_info_code)
 VALUES

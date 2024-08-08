@@ -159,7 +159,7 @@
                         <div class="position-relative">
                             <button type="button" class="btn btn-danger btn-sm position-absolute" onclick="removeItem(this)">&times;</button>
                         </div>
-                        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
+                        <img th:src="@{${item.product.imgList[0].imgUrl}}" alt="Product Image" class="product-img">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${item.product.productName}"></h5>
                             <p class="card-text">

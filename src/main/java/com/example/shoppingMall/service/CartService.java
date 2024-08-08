@@ -1,7 +1,6 @@
 package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.api.CashedExRateProvider;
-import com.example.shoppingMall.dto.CartDto;
 import com.example.shoppingMall.entity.Cart;
 import com.example.shoppingMall.entity.Product;
 import com.example.shoppingMall.repository.CartRepository;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartService {
@@ -29,10 +27,17 @@ public class CartService {
 
     @Autowired
     CashedExRateProvider exRateProvider;
-
     public List<Cart> findAll(String user) {
-        String sql = "SELECT c FROM Cart c WHERE c.userInfo.user.id = :user";
-        TypedQuery<Cart> query = em.createQuery(sql, Cart.class).setParameter("user", user);
+
+        String jpql = "SELECT c FROM Cart c "
+                + "JOIN c.product p "
+                + "JOIN p.imgList i "
+                + "WHERE c.userInfo.user.id = :userId "
+                + "AND i.imgUrl LIKE :imgPattern";
+
+        TypedQuery<Cart> query = em.createQuery(jpql, Cart.class)
+                .setParameter("userId", user)
+                .setParameter("imgPattern", "%main%");
         List<Cart> cart = null;
         try {
             cart = query.getResultList();

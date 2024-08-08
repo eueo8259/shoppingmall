@@ -7,6 +7,7 @@ import com.example.shoppingMall.entity.Product;
 import com.example.shoppingMall.entity.ProductImg;
 import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repositoryCustom.ProductCustomRepository;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -46,10 +47,12 @@ public class ProductService {
 
 
     private final ProductRepository productRepository;
+    private final ProductCustomRepository productCustomRepository;
     private final CashedExRateProvider exRateProvider;
 
-    public ProductService(ProductRepository productRepository, CashedExRateProvider exRateProvider) {
+    public ProductService(ProductRepository productRepository, ProductCustomRepository productCustomRepository, CashedExRateProvider exRateProvider) {
         this.productRepository = productRepository;
+        this.productCustomRepository = productCustomRepository;
         this.exRateProvider = exRateProvider;
     }
 
@@ -86,20 +89,6 @@ public class ProductService {
         em.persist(product);
     }
 
-    @Transactional
-    public List<ProductDto> printProduct(String categoryName) {
-        String sql = "SELECT p FROM Product p WHERE p.category.categoryName = :categoryName";
-        TypedQuery<Product> query = em.createQuery(sql, Product.class);
-        query.setParameter("categoryName", categoryName); // Named parameter에 값 설정
-        List<Product> productList = query.getResultList();
-
-        List<ProductDto> productDtoList = new ArrayList<>();
-        for (Product product : productList) {
-            ProductDto productDto = productDtoFromEntity(product);
-            productDtoList.add(productDto);
-        }
-        return productDtoList;
-    }
     @Transactional
     public void productUpdate(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
         Product product = em.find(Product.class, productDto.getProductCode());
@@ -236,7 +225,7 @@ public class ProductService {
         }
         return productDtoList;
     }
-    private ProductDto productDtoFromEntity(Product product) {
+    public ProductDto productDtoFromEntity(Product product) {
 
         ProductDto productDto = new ProductDto();
 
@@ -251,12 +240,13 @@ public class ProductService {
         productDto.setCurrency(product.getCurrency());
         productDto.setProductRate(product.getProductRate());
         productDto.setProductQuantity(product.getProductQuantity());
-        productDto.setProductStatus(product.getStatus()); //나중에 상태값에 따라서 출력되고 출력되지않도록 쿼리문 수정
+        productDto.setUserInfoCode(product.getUserInfo().getUserInfoCode());
+        productDto.setProductStatus(product.getStatus());
         productDto.setDescription(product.getDescription());
         productDto.setCategoryName(product.getCategory().getCategoryName());
         productDto.setImgList(new ArrayList<>());
         for (ProductImg image : product.getImgList()) {
-            if (image.getImgUrl().contains("main")) { // "main"이 포함된 이미지를 찾음
+            if (image.getImgUrl().contains("main")) {
                 productDto.setMainImg(image.getImgUrl());
                 System.out.println(productDto.getMainImg());
             }else {
@@ -283,16 +273,16 @@ public class ProductService {
 
 
 
-//    public Page<ProductDto> getProductsAwaitingApproval(Pageable pageable) {
-//        Page<Product> productPage = productRepository.getProductsAwaitingApproval(pageable);
-//
-//        List<ProductDto> productDtoList = productPage.getContent().stream()
-//                .map(this::productDtoFromEntity)
-//                .collect(Collectors.toList());
-//
-//        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
-//
-//    }
+    public Page<ProductDto> getProductsAwaitingApproval(Pageable pageable) {
+        Page<Product> productPage = productRepository.getProductsAwaitingApproval(pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+    }
 
     public Page<ProductDto> getProductAllList(Pageable pageable) {
         Page<Product> productPage = productRepository.getProductsList(pageable);
@@ -326,4 +316,37 @@ public class ProductService {
         Product product = em.find(Product.class, productCode);
         em.remove(product);
     }
+
+    public Page<ProductDto> getKeywordProductList(String type, String keyword, Pageable pageable) {
+       Page<Product> productPage = productCustomRepository.getSearchProductList(type, keyword, pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+
+    }
+
+    public Page<ProductDto> getKeywordApproveProductList(String type, String keyword, Pageable pageable) {
+        Page<Product>  productPage = productCustomRepository.getSearchApproveProductList(type, keyword, pageable);
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+    }
+
+    public Page<ProductDto> getCategoryProductList(Pageable pageable, String categoryCode) {
+        Page<Product> productPage = productCustomRepository.findProductListByCategory(categoryCode, pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+    }
+
 }

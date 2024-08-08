@@ -34,9 +34,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" style="color: black;">카테고리</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">식품</a></li>
-                        <li><a class="dropdown-item" href="#">전자제품</a></li>
-                        <li><a class="dropdown-item" href="#">가전제품</a></li>
+                        <li th:each="category : ${categoryList}">
+                            <a class="dropdown-item" th:href="@{/product/list(categoryCode=${category.categoryCode})}" th:text="${category.categoryName}"></a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

@@ -1,7 +1,9 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.constant.UserRole;
+import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.entity.Users;
+import com.example.shoppingMall.service.ProductService;
 import com.example.shoppingMall.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +12,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.util.List;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalControllerAdvice {
 
     @Autowired
     UserService userService;
+    @Autowired
+    ProductService productService;
 
     @ModelAttribute
     public void addAttributes(Model model) {
@@ -28,5 +36,9 @@ public class GlobalControllerAdvice {
             model.addAttribute("userRole", userRole);
             log.info(userRole.toString());
         }
+
+            List<Category> categoryList = productService.categoryList();
+            model.addAttribute("categoryList", categoryList);
+
     }
 }

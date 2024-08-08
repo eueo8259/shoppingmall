@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,14 +34,11 @@ public class CartController {
         if(principal != null) {
             String user = principal.getName();
             List<Cart> cartList = cartService.findAll(user);
+            for (Cart c : cartList){
+                System.out.println(c.getProduct().getProductPrice());
+            }
             model.addAttribute("cart", cartList);
-            // cartList에서 product를 추출하여 productDtoFromEntity 메소드에 전달
-            /*for (Cart cart : cartList) {
-                Product product = cart.getProduct();
-                ProductDto productDto = productService.productDtoFromEntity(product);
-                cart.setProduct(productDto);
-            *}*/
-            log.info(cartList.toString());
+
             return "cart/main";
         }
         return "cart/main";

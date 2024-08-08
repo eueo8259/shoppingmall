@@ -55,8 +55,7 @@
             <th>카테고리</th>
             <th>판매자 코드</th>
             <th>평점</th>
-            <th>판매 상황</th>
-            <th>삭제</th>
+            <th>승인</th>
         </tr>
         </thead>
         <tbody>
@@ -70,17 +69,17 @@
             <td th:text="${product.categoryName}"></td>
             <td th:text="${product.userInfoCode}"></td>
             <td th:text="${product.productRate}"></td>
-            <td th:text="${product.productStatus}"></td>
             <td>
-                <form th:action="@{/admin/delete/{productCode}(productCode=${product.productCode})}" method="post">
+                <form th:action="@{/admin/approve/{productCode}(productCode=${product.productCode})}" method="post">
                     <input type="hidden" th:value="${product.productCode}">
-                    <input type="submit" value="삭제">
+                    <input type="submit" value="승인">
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <form th:action="@{/admin/management/search}" method="get">
+
+    <form th:action="@{/admin/approve/search}" method="get">
         <select name="type">
             <option value="productName">상품명</option>
             <option value="userInfoCode">판매자 코드</option>
@@ -94,19 +93,19 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${paging != null and paging.number <= 0 ? 'disabled' : ''}">
                 <a class="page-link"
-                   th:href="@{/admin/management(page=${paging != null ? paging.number - 1 : 0})}">
+                   th:href="@{/admin/approve(page=${paging != null ? paging.number - 1 : 0})}">
                     Previous
                 </a>
             </li>
             <th:block th:each="pageNumber : ${pagination}">
                 <li class="page-item" th:classappend="${paging.number == pageNumber ? 'active' : ''}">
                     <a class="page-link"
-                       th:href="@{/admin/management(page=${pageNumber})}"
+                       th:href="@{/admin/approve(page=${pageNumber})}"
                        th:text="${pageNumber + 1}"></a>
                 </li>
             </th:block>
             <li class="page-item" th:classappend="${paging != null and paging.number + 1 == paging.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/management(page=${paging != null ? paging.number + 1 : 0})}">Next</a>
+                <a class="page-link" th:href="@{/admin/approve(page=${paging != null ? paging.number + 1 : 0})}">Next</a>
             </li>
         </ul>
     </nav>
@@ -115,7 +114,7 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${paging != null and paging.number <= 0 ? 'disabled' : ''}">
                 <a class="page-link"
-                   th:href="@{/admin/management/search(type=${type}, keyword=${keyword},
+                   th:href="@{/admin/approve/search(type=${type}, keyword=${keyword},
                page=${paging != null ? paging.number - 1 : 0})}">
                     Previous
                 </a>
@@ -123,17 +122,16 @@
             <th:block th:each="pageNumber : ${pagination}">
                 <li class="page-item" th:classappend="${paging.number == pageNumber ? 'active' : ''}">
                     <a class="page-link"
-                       th:href="@{/admin/management/search(type=${type},keyword=${keyword}, page=${pageNumber})}"
+                       th:href="@{/admin/approve/search(type=${type},keyword=${keyword}, page=${pageNumber})}"
                        th:text="${pageNumber+1}"></a>
                 </li>
             </th:block>
             <li class="page-item" th:classappend="${paging != null and paging.number + 1 == paging.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/management/search(type=${type},keyword=${keyword},
+                <a class="page-link" th:href="@{/admin/approve/search(type=${type},keyword=${keyword},
                                 page=${paging != null ? paging.number + 1 : 0})}">Next</a>
             </li>
         </ul>
     </nav>
-
 </div>
 </body>
 </html>
