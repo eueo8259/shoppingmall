@@ -2,10 +2,8 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.*;
 import com.example.shoppingMall.entity.Cart;
-import com.example.shoppingMall.service.CartService;
-import com.example.shoppingMall.service.DeliveryService;
-import com.example.shoppingMall.service.OrderService;
-import com.example.shoppingMall.service.UserService;
+import com.example.shoppingMall.entity.UserCoupon;
+import com.example.shoppingMall.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,20 +31,23 @@ public class OrderController {
     CartService cartService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    UserCouponService userCouponService;
 
     @GetMapping("/cart")
     public String cartOrder(@RequestParam("orderItems") Long[] orderItems,
                             @RequestParam("userInfoCode") Long userInfoCode, Model model) {
-        OrdersDto orderDto = new OrdersDto();
         UserInfoDto userInfoDto = userService.findUserInfo(userInfoCode);
         List<DeliveryDto> deliveryDto = deliveryService.deliveryList(userInfoCode);
         DeliveryDto defaultDelivery = deliveryService.defaultDelivery(userInfoCode);
         List<Cart> cartList = cartService.findCartCodes(orderItems);
+        List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode);
+        log.info(userCoupons.toString());
         model.addAttribute("userInfoDto", userInfoDto);
         model.addAttribute("deliveryDto", deliveryDto);
         model.addAttribute("defaultDelivery", defaultDelivery);
         model.addAttribute("cartList", cartList);
-        model.addAttribute("orderDto", orderDto);
+        model.addAttribute("userCoupons", userCoupons);
         return "order/insertOrderCart";
     }
 
@@ -54,16 +55,15 @@ public class OrderController {
     @ResponseBody
     public Map<String, String> insertOrder(@RequestBody Map<String, Object> requestBody){
         ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             // JSON 문자열 -> Java 객체 변환
-            OrdersDto orderDto = objectMapper.convertValue(requestBody.get("orderDto"), OrdersDto.class);
+            OrderDto orderDto = objectMapper.convertValue(requestBody.get("orderDto"), OrderDto.class);
+            Long[] cartCodeList = objectMapper.convertValue(requestBody.get("cartCodeList"), Long[].class);
             List<Map<String, Object>> orderDetailList = objectMapper.convertValue(
                     requestBody.get("orderDetailList"), new TypeReference<List<Map<String, Object>>>() {}
             );
-            log.info(orderDto.toString());
-            log.info(orderDetailList.toString());
-            orderService.insertOrder(orderDto, orderDetailList);
+            Long couponCode = objectMapper.convertValue(requestBody.get("couponCode"), Long.class);
+            orderService.insertOrder(orderDto, orderDetailList, cartCodeList, couponCode);
             Map<String, String> response = new HashMap<>();
             response.put("redirectUrl", "/");
             return response;
@@ -73,19 +73,17 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/orderList")
+    @GetMapping("/list")
     public String orderList(Model model, Principal principal) {
 
         if(principal != null) {
-            OrdersDto orderList = orderService.findOrders(principal);
-            Long orderCode = orderList.getOrderCode();
-            OrderDetailDto orderDetailList = new OrderDetailDto();
-            if(orderList != null) {
-                OrderDetailDto OrderDetailDto = orderService.findOrderDetail(orderCode);
-            }
+            List<OrderDto> orderList = orderService.findOrders(principal);
+            List<OrderDetailDto> orderDetailList = new ArrayList<>();
+            orderDetailList = orderService.findOrderDetail(orderList);
+            log.info(orderList.toString());
             model.addAttribute("orderList", orderList);
             model.addAttribute("orderDetailList", orderDetailList);
-            return "point/chargePointPop";
+            return "order/orderList";
         } else {
             return "redirect:/";
         }

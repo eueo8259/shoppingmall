@@ -22,7 +22,7 @@ public class DeliveryController {
     @Autowired
     DeliveryService deliveryService;
 
-    @GetMapping("/deliveryList")
+    @GetMapping("/list")
     public String deliveryList(Model model, Principal principal) {
         if(principal != null) {
             String userId = principal.getName();

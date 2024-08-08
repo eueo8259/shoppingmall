@@ -118,6 +118,7 @@
                                             cartList.product.productName + ' ' + cartList.quantity + '개'}"
                                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             </span>
+                            <input type="hidden" class="cartCode" th:value="${cartList.cartCode}">
                             <input type="hidden" class="productCode" th:value="${cartList.product.productCode}">
                             <input type="hidden" class="price" th:value="${cartList.product.productPrice}">
                             <input type="hidden" class="quantity" th:value="${cartList.quantity}">
@@ -139,12 +140,16 @@
                     <th scope="row">할인쿠폰</th>
                     <td>
                         <span id="couponAmount">0</span>원
-                        <select class="form-select-sm"
-                                style="width: 60%; float: right; height: 25px; font-size: 12px; color: #787878; " >
+                        <select class="form-select-sm couponSelect"
+                                style="width: 60%; float: right; height: 25px; font-size: 12px; color: #787878;" >
                             <option selected value="0">쿠폰 미적용</option>
-                            <option value="coupon1">coupon1</option>
-                            <option value="coupon2">coupon2</option>
-                            <option value="coupon3">coupon3</option>
+                            <option th:each="userCoupons : ${userCoupons}" th:value="${userCoupons.userCouponCode}" class="couponEach"
+                                    th:data-discount-amount="${userCoupons.coupon.discountAmount}"
+                                    th:data-discount-rate="${userCoupons.coupon.discountRate}"
+                                    th:text="${userCoupons.coupon.discountAmount != 0 ?
+                                    userCoupons.coupon.category.categoryName + ' ' + #numbers.formatInteger(userCoupons.coupon.discountAmount, 1, 'COMMA') + '원 쿠폰' :
+                                    userCoupons.coupon.category.categoryName + ' ' + #numbers.formatInteger((userCoupons.coupon.discountRate * 100), 1) + '% 쿠폰'}">
+                            </option>
                         </select>
                     </td>
                 </tr>

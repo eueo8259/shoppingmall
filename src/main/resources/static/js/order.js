@@ -4,7 +4,8 @@ $(document).ready(function() {
     var chargePop;
     var couponPop;
     var total = 0;
-    var discount = 0;
+    var gradeDiscountAmount = 0;
+    var couponAmount = 0;
     var payment = 0;
     totalPrice();
     gradeDiscount();
@@ -44,8 +45,7 @@ $(document).ready(function() {
             $("#defaultYn").val("N");
         }
 
-        console.log(userId);
-
+//        console.log(userId);
 
         $.ajax({
             url: '/delivery/popSave',
@@ -119,6 +119,28 @@ $(document).ready(function() {
            console.error("Opener window is not available.");
         }
     });
+
+    $('.couponSelect').change(function(){
+        var selectedOption = $(this).find('option:selected');
+        var discountAmount = selectedOption.data('discount-amount');
+        var discountRate = selectedOption.data('discount-rate');
+        if (discountAmount === 0 && discountRate === 0) {
+            couponAmount = total;
+        } else if (discountAmount > 0) {
+            couponAmount = 0 - discountAmount;
+        } else if (discountRate > 0) {
+            couponAmount = 0 - total * discountRate;
+        }
+
+        var formattedPrice = couponAmount.toLocaleString('ko-KR', {
+            minimumFractionDigits: 0,  // 최소 소수점 자릿수
+            maximumFractionDigits: 0   // 최대 소수점 자릿수
+        });
+        $('#couponAmount').text(formattedPrice);
+        paymentAmount();
+    });
+
+
     $('#chargePopBtn').click(function(){
       chargePop = window.open('http://localhost:8080/point/chargePointPop', 'chargePointPop', 'width=700px,height=800px');
     });
@@ -131,27 +153,37 @@ $(document).ready(function() {
             $("#chargePoint").focus();
             return false;
         }
-        alert("충전이 완료되었습니다.")
-        $("#charge-form").submit();
         $.ajax({
-            url: '/point/pointReflection',
+            url: $('#charge-form').attr('action'),
             type: 'POST',
-            data: { userInfoCode: userInfoCode },
-            success: function(data) {
-                if(data != null && window.opener) {
-                    var formattedPoint = Number(data.currentPoint).toLocaleString();
-                    $(window.opener.document).find("#currentPoint").text(formattedPoint);
-                    window.close();
-                }
+            data: $('#charge-form').serialize(), // 폼 데이터 직렬화
+            success: function(response) {
+                var userInfoCode = $(window.opener.document).find("#userInfoCode").val();
+
+                $.ajax({
+                    url: '/point/pointReflection',
+                    type: 'POST',
+                    data: { userInfoCode: userInfoCode },
+                    success: function(data) {
+                        if (data != null && window.opener) {
+                            var formattedPoint = Number(data.currentPoint).toLocaleString();
+                            var openerDocument = window.opener.document;
+                            var pointElement = openerDocument.getElementById("currentPoint");
+                            window.close();
+                        }
+                    },
+                    error: function() {
+                        alert("포인트 반영중 오류가 발생했습니다. 다시 시도해 주세요.");
+                    }
+                });
             },
             error: function() {
-                alert("포인트 반영중 오류가 발생했습니다. 다시 시도해 주세요.");
+                alert("포인트 충전 중 오류가 발생했습니다. 다시 시도해 주세요.");
             }
         });
         return true;
     });
     function totalPrice() {
-
         $('.cartListEach').each(function() {
             var price = $(this).find('.price').val();
             var quantity = $(this).find('.quantity').val();
@@ -164,15 +196,12 @@ $(document).ready(function() {
     function gradeDiscount() {
         var userGrade = $('#userGrade').val();
         var totalPrice = total;
-        console.log(userGrade);
-        console.log(totalPrice);
         if(userGrade === "VIP") {
-            discount = totalPrice * -0.1;
+            gradeDiscountAmount = totalPrice * -0.1;
         } else {
-            discount = totalPrice * -0.05;
+            gradeDiscountAmount = totalPrice * -0.05;
         }
-        console.log(formattedPrice);
-        var formattedPrice = discount.toLocaleString('ko-KR', {
+        var formattedPrice = gradeDiscountAmount.toLocaleString('ko-KR', {
             minimumFractionDigits: 0,  // 최소 소수점 자릿수
             maximumFractionDigits: 0   // 최대 소수점 자릿수
         });
@@ -180,13 +209,11 @@ $(document).ready(function() {
     }
     function paymentAmount() {
         var totalPrice = total;
-        var discountPrice = discount;
-        var couponAmount = 0;   // 쿠폰 작업 진행 후 수정 필요
-        console.log(totalPrice);
-        console.log(discountPrice);
-        console.log(couponAmount);
-        payment = totalPrice + discount + couponAmount;
-        console.log(payment);
+//        console.log(totalPrice);
+//        console.log(discountPrice);
+//        console.log(couponAmount);
+        payment = totalPrice + gradeDiscountAmount + couponAmount;
+//        console.log(payment);
         var formattedPrice = payment.toLocaleString('ko-KR', {
             minimumFractionDigits: 0,  // 최소 소수점 자릿수
             maximumFractionDigits: 0   // 최대 소수점 자릿수
@@ -199,9 +226,10 @@ $(document).ready(function() {
             alert("포인트가 부족합니다.")
             return false;
         }
-        confirm("결제를 진행하시겠습니까?")
-        inputDto();
-        return true;
+        if(confirm("결제를 진행하시겠습니까?")){
+            inputDto();
+            return true;
+        }
     });
 
     function inputDto() {
@@ -211,29 +239,29 @@ $(document).ready(function() {
         var couponAmount = parseInt($("#couponAmount").text());
         var discountAmount = gradeDiscount + couponAmount;
         var deliveryCode = $("#parentDeliveryCode").val();
-        console.log(gradeDiscount);
-        console.log(couponAmount);
-        console.log(discountAmount);
-        console.log(deliveryCode);
-        console.log(paymentPrice);
         var orderDetailList = [];
-            $('.cartListEach').each(function(index) {
-                var productCode = $(this).find('.productCode').val();
-                var orderPrice = $(this).find('.price').val();
-                var orderQuantity = $(this).find('.quantity').val();
-                orderDetailList.push({ productCode: Number(productCode), orderPrice: Number(orderPrice), orderQuantity: Number(orderQuantity) });
-            });
+        var cartCodeList = [];
+        var couponCode = $('.couponSelect').val();
+//        console.log(couponCode);
+        $('.cartListEach').each(function(index) {
+            var cartCode = $(this).find('.cartCode').val();
+            var productCode = $(this).find('.productCode').val();
+            var orderPrice = $(this).find('.price').val();
+            var orderQuantity = $(this).find('.quantity').val();
+            orderDetailList.push({ productCode: Number(productCode), orderPrice: Number(orderPrice), orderQuantity: Number(orderQuantity) });
+            cartCodeList.push(cartCode);
+        });
 
         var orderDto = {
-                userInfo: {
-                    userInfoCode: userInfoCode
-                },
-                paymentPrice: Number(paymentPrice),
-                discountAmount: discountAmount,
-                delivery: {
-                    deliveryCode: deliveryCode
-                }
-            };
+            userInfo: {
+                userInfoCode: userInfoCode
+            },
+            paymentPrice: Number(paymentPrice),
+            discountAmount: discountAmount,
+            delivery: {
+                deliveryCode: deliveryCode
+            }
+        };
 
         $.ajax({
             url: '/order/insertOrder',
@@ -241,7 +269,9 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 orderDetailList: orderDetailList,
-                orderDto: orderDto
+                orderDto: orderDto,
+                cartCodeList: cartCodeList,
+                couponCode: couponCode
             }),
             success: function(response) {
                 alert("결제가 완료되었습니다.");

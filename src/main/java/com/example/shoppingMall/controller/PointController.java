@@ -70,6 +70,7 @@ public class PointController {
         UserInfoDto userInfoDto = userService.findUserInfo(userInfoCode);
         Map<String, Integer> data = new HashMap<>();
         data.put("currentPoint", userInfoDto.getCurrentPoint());
+        log.info(data.toString());
         return data;
     }
 
