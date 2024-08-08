@@ -29,7 +29,7 @@ public class UserPointService {
         return userPointDto;
     }
     @Transactional
-    public void chargePoint(int chargePoint, String userId, String remarks) {
+    public String chargePoint(int chargePoint, String userId, String remarks, String popYn) {
         UserInfo userInfo = userInfoRepository.findByUserId(userId);
         UserPoint userPoint = new UserPoint();
         userPoint.setOccurDate(LocalDateTime.now());
@@ -40,5 +40,6 @@ public class UserPointService {
 
         userInfo.setCurrentPoint(userInfo.getCurrentPoint()+userPoint.getChargePoint());
         userInfoRepository.save(userInfo);
+        return popYn;
     }
 }

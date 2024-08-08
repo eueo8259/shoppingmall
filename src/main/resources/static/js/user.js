@@ -1,4 +1,11 @@
 $(document).ready(function() {
+
+    $("input[name='role']").on("change", function() {
+        if ($("#role_seller").is(":checked")) {
+            confirm("회원가입 후 관리자의 승인이 필요합니다.");
+        }
+    });
+
     var checkOk = false;
     $('#password2').on('input', function() {
         var password = $('#password').val();

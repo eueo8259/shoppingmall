@@ -97,7 +97,7 @@ public class UserService {
     }
 
     public List<UserInfoDto> userListAll() {
-        return userInfoRepository.findAll().stream().map(x -> UserInfoDto.fromUserInfoEntity(x))
+        return userInfoRepository.findAll().stream().map(UserInfoDto::fromUserInfoEntity)
                 .filter(userInfoDto -> userInfoDto.getUser().getUserRole() != UserRole.ADMIN)
                 .collect(Collectors.toList());
     }
@@ -120,5 +120,9 @@ public class UserService {
         UserInfo findUserInfo = userInfoRepository.findByUserId(userId);
         findUserInfo.setIsActive(isActive);
         userInfoRepository.save(findUserInfo);
+    }
+
+    public UserInfoDto findUserInfo(Long userInfoCode) {
+        return userInfoRepository.findById(userInfoCode).map(UserInfoDto::fromUserInfoEntity).orElse(null);
     }
 }

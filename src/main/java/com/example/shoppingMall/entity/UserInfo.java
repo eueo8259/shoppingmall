@@ -2,6 +2,9 @@ package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
@@ -10,7 +13,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +28,10 @@ public class UserInfo {
     private LocalDate birthDate;
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
-    @ColumnDefault("'일반'")
-    private String grade;
+    private String grade = "일반";
     @ManyToOne
     @JoinColumn(name = "id")
     private Users user;
-    @ColumnDefault("0")
-    private int currentPoint;
-    @ColumnDefault("'Y'")
-    private String isActive;
+    private int currentPoint = 0;
+    private String isActive = "Y";
 }

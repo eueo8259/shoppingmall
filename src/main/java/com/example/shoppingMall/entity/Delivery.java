@@ -2,9 +2,13 @@ package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +20,5 @@ public class Delivery {
     private String address;
     private String contactNumber; //받는 사람 번호
     private String contactName; //받는 사람 이름
-    private String defaultYn; // 기본 배송지 여부
+    private String defaultYn = "N";
 }
