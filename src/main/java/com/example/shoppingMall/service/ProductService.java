@@ -182,4 +182,7 @@ public class ProductService {
             product.setStatus("판매종료");
         }
     }
+    public Product findOrderItem(Long orderItem) {
+        return productRepository.findById(orderItem).orElse(null);
+    }
 }

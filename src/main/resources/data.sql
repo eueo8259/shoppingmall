@@ -88,7 +88,7 @@ VALUES
 INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
 VALUES
 (1, 3 ,'2024-08-05 09:00:00', 30000, 0, '포인트충전'),
-(2, 3 ,'2024-08-05 09:15:00', 0, 35000, '주문번호:3'),
+(2, 3 ,'2024-08-05 09:15:00', 0, 35000, '주문번호: 3'),
 (3, 3 ,'2024-08-05 09:20:00', 200, 0, '리뷰이벤트적립금');
 
 INSERT INTO coupon (coupon_code, category_code, discount_rate, discount_amount)

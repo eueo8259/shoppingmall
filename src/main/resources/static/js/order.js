@@ -184,12 +184,22 @@ $(document).ready(function() {
         return true;
     });
     function totalPrice() {
+        var price = 0;
+        var quantity = 0;
+        var subtotal = 0;
         $('.cartListEach').each(function() {
-            var price = $(this).find('.price').val();
-            var quantity = $(this).find('.quantity').val();
-            var subtotal = price * quantity;
+            price = $(this).find('.price').val();
+            quantity = $(this).find('.quantity').val();
+            subtotal = price * quantity;
             total += subtotal;
         });
+        if(subtotal === 0) {
+            price = $('.price').val();
+            quantity = $('.quantity').val();
+            subtotal = price * quantity;
+            total += subtotal;
+        }
+
         var formattedPrice = total.toLocaleString();
         $('#totalPrice').text(formattedPrice);
     }

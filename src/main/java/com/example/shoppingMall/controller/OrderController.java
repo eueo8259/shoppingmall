@@ -3,6 +3,7 @@ package com.example.shoppingMall.controller;
 import com.example.shoppingMall.dto.*;
 import com.example.shoppingMall.entity.Cart;
 import com.example.shoppingMall.entity.UserCoupon;
+import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +33,9 @@ public class OrderController {
     @Autowired
     OrderService orderService;
     @Autowired
+    ProductService productService;
+
+    @Autowired
     UserCouponService userCouponService;
 
     @GetMapping("/cart")
@@ -49,6 +53,28 @@ public class OrderController {
         model.addAttribute("cartList", cartList);
         model.addAttribute("userCoupons", userCoupons);
         return "order/insertOrderCart";
+    }
+
+    @GetMapping("/direct")
+    public String directOrder(@RequestParam("productCode") Long productCode,
+                              @RequestParam("quantity") int quantity,
+                              Principal principal, Model model) {
+        if(principal != null) {
+            Long userInfoCode = userService.findByUserId(principal.getName()).getUserInfoCode();
+            UserInfoDto userInfoDto = userService.findUserInfo(userInfoCode);
+            List<DeliveryDto> deliveryDto = deliveryService.deliveryList(userInfoCode);
+            DeliveryDto defaultDelivery = deliveryService.defaultDelivery(userInfoCode);
+            List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode);
+            OrderDetailDto orderDetailDto = orderService.newOrderDetail(productCode, quantity);
+            model.addAttribute("userInfoDto", userInfoDto);
+            model.addAttribute("deliveryDto", deliveryDto);
+            model.addAttribute("defaultDelivery", defaultDelivery);
+            model.addAttribute("userCoupons", userCoupons);
+            model.addAttribute("orderDetailDto", orderDetailDto);
+            return "order/insertOrderDirect";
+        } else {
+            return "redirect:/";
+        }
     }
 
     @PostMapping("/insertOrder")

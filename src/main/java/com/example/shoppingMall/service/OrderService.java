@@ -2,6 +2,7 @@ package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.dto.OrderDetailDto;
 import com.example.shoppingMall.dto.OrderDto;
+import com.example.shoppingMall.dto.ProductDto;
 import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ public class OrderService {
 
         Orders orders = new Orders();
         orders.setUserInfo(userInfo);
+        orders.setOrderDate(LocalDateTime.now());
         orders.setPaymentPrice(orderDto.getPaymentPrice());
         orders.setDiscountAmount(orderDto.getDiscountAmount());
         orders.setDelivery(new Delivery());
@@ -68,8 +71,10 @@ public class OrderService {
         userPoint.setRemarks("주문번호: " + orderCode);
         userPointRepository.save(userPoint);
 
-        for(int i = 0; i < cartCodeList.length; i++){
-            cartRepository.deleteById(cartCodeList[i]);
+        if (cartCodeList != null) {
+            for(int i = 0; i < cartCodeList.length; i++){
+                cartRepository.deleteById(cartCodeList[i]);
+            }
         }
         if(couponCode != null) {
             userCouponRepository.deleteById(couponCode);
@@ -103,5 +108,13 @@ public class OrderService {
             }
         }
         return orderDetailList;
+    }
+
+    public OrderDetailDto newOrderDetail(Long orderItem, int quantity) {
+        Product product = productService.findOrderItem(orderItem);
+        OrderDetailDto orderDetailDto = new OrderDetailDto();
+        orderDetailDto.setProduct(product);
+        orderDetailDto.setOrderQuantity(quantity);
+        return orderDetailDto;
     }
 }
