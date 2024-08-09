@@ -1,123 +1,249 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>문의 게시판</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start; /* 위쪽 정렬을 원하는 경우 */
+        body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .left {
-        width: 30%; /* 왼쪽 컬럼의 너비 조정 */
-        padding: 20px;
-        background-color: #f0f0f0; /* 왼쪽 컬럼 배경색 */
+    .container {
+        margin-top: 20px;
     }
 
-    .right {
-        width: 68%; /* 오른쪽 컬럼의 너비 조정 */
-        padding: 20px;
-        background-color: #fff; /* 오른쪽 컬럼 배경색 */
-    }/* styles.css 파일에 추가할 스타일 */
-    .card {
+    .header {
+        text-align: center;
         margin-bottom: 20px;
     }
 
+    .header h3 {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .main-content {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .left, .right {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .left {
+        width: 30%;
+        background-color: #f0f0f0;
+        margin-right: 20px;
+    }
+
+    .right {
+        width: 70%;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
     .card-title {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        color: #333;
     }
 
     .list-group-item {
         cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .list-group-item:hover {
+        background-color: #007bff;
+        color: #fff;
     }
 
     .btn-primary {
         background-color: #007bff;
         border-color: #007bff;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     .btn-primary:hover {
         background-color: #0056b3;
-        border-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .breadcrumb {
+        background-color: #e9ecef;
+        border-radius: 8px;
+    }
+
+    .breadcrumb-item a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .table-bordered {
+        border-radius: 8px;
+    }
+
+    .table-primary {
+        background-color: #cfe2ff;
+    }
+
+    .table thead th {
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .btn-custom {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        border-radius: 50px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .footer {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+     .pagination {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .pagination .page-item {
+        margin-left: 5px;
+    }
+    .table-success {
+    background-color: #d4edda; /* Green background for answered */
+    }
+
+    .table-warning {
+        background-color: #fff3cd; /* Yellow background for unanswered */
+    }
+    a {
+        color: #007bff; /* 기본 링크 색상 */
+        text-decoration: none; /* 링크 밑줄 제거 */
+    }
+    a:hover {
+        text-decoration: underline; /* 링크에 마우스를 올릴 때 밑줄 추가 */
     }
 
     </style>
 </head>
 <body>
-<h3 class="text-center mb-4">문의 게시판</h3>
-<div class="container mt-5">
-
-
+<div class="container" layout:fragment="content">
+    <div class="header">
+        <h3><i class="fas fa-question-circle icon"></i> 문의 게시판</h3>
+    </div>
     <div class="card mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">홈</a></li>
-                <li class="breadcrumb-item active" aria-current="page">문의게시판</li>
+                <li class="breadcrumb-item"><a th:href="@{/}"><i class="fas fa-home"></i> 홈</a></li>
+                <li class="breadcrumb-item active" aria-current="page">문의 게시판</li>
             </ol>
         </nav>
         <div class="card-body">
-            <h4>안녕하세요. 무엇을 도와드릴까요</h4>
+            <h4><i class="fas fa-info-circle icon"></i> 안녕하세요. 무엇을 도와드릴까요?</h4>
             <p class="mb-0">도움말에 대한 문의 도움을 받으세요</p>
         </div>
     </div>
-</div>
-
-<div class="container">
-    <div class="left">
-
+    <div class="main-content">
+        <div class="left">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">도움말</h4>
+                    <h4 class="card-title"><i class="fas fa-life-ring icon"></i>도움말</h4>
                     <ul class="list-group">
-                        <li class="list-group-item">주문 문제</li>
-                        <li class="list-group-item">배송 및 배달</li>
-                        <li class="list-group-item">반품 및 환불</li>
-                        <li class="list-group-item">재품 및 재고</li>
-                        <li class="list-group-item">내 계정 관리</li>
-                        <li class="list-group-item">결제 및 프로모션</li>
-                        <li class="list-group-item">보안</li>
-                        <li class="list-group-item">상품 요청</li>
+                        <li class="list-group-item"><i class="fas fa-truck icon"></i> 주문 문제</li>
+                        <li class="list-group-item"><i class="fas fa-shipping-fast icon"></i> 배송 및 배달</li>
+                        <li class="list-group-item"><i class="fas fa-undo icon"></i> 반품 및 환불</li>
+                        <li class="list-group-item"><i class="fas fa-box icon"></i> 제품 및 재고</li>
+                        <li class="list-group-item"><i class="fas fa-user icon"></i> 내 계정 관리</li>
+                        <li class="list-group-item"><i class="fas fa-credit-card icon"></i> 결제 및 프로모션</li>
+                        <li class="list-group-item"><i class="fas fa-shield-alt icon"></i> 보안</li>
+                        <li class="list-group-item"><i class="fas fa-gift icon"></i> 상품 요청</li>
                     </ul>
                 </div>
             </div>
-
-    </div>
-
-        <div class="col-md-8">
-            <div class="right">
+        </div>
+        <div class="right">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered border-primary">
-                            <thead class="table-primary">
+                        <table class="table table-success table-striped-columns">
+                            <thead class="table-light">
                             <tr>
-                                <th>번호</th>
                                 <th>제목</th>
-                                <th>작성일</th>
-                                <th>고객코드</th>
-                                <th>상품코드</th>
+                                <th>고객</th>
+                                <th>상품</th>
+                                <th>조회수</th>
                                 <th>답변여부</th>
                             </tr>
                             </thead>
                             <tbody>
-
+                            <tr th:each="paging : ${paging}"
+                                th:classappend="${paging.hasComment} ? 'table-success' : 'table-warning'">
+                                <td th:text="${paging.boardTitle}"></td>
+                                <td th:text="${paging.userInfo.userName}"></td>
+                                <td th:text="${paging.product.productName}"></td>
+                                <td th:text="${paging.views}"></td>
+                                <td>
+                                    <a th:href="@{/board/details/{id}(id=${paging.boardCode})}" th:text="${paging.hasComment ? '답변됨' : '미답변'}"></a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${paging.number} <= 0 ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/board(page=${paging.number-1})}">
+                                        Previous
+                                    </a>
+                                </li>
+                                <th:block th:each="pageNumber : ${pagination}">
+                                    <li class="page-item"><a class="page-link"
+                                                             th:href="@{/board(page=${pageNumber})}"
+                                                             th:text="${pageNumber+1}">1</a></li>
+                                </th:block>
+
+                                <li class="page-item" th:classappend="${paging.number + 1} == ${paging.totalPages} ? 'disabled'"><a class="page-link"
+                                                                                                                                    th:href="@{/board(page=${paging.number + 1})}">Next</a></li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
+    <div class="footer">
+        <a class="btn btn-primary btn-custom" th:href="@{/board/insert}"><i class="fas fa-pencil-alt icon"></i> 문의하기</a>
+    </div>
 </div>
-
-<div class="container mt-4 mb-5">
-    <button class="btn btn-primary">문의하기</button>
-</div>
-
-
 </body>
 </html>

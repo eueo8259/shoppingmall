@@ -1,7 +1,11 @@
 package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.entity.Cart;
+import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.entity.WishList;
+import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repository.UserInfoRepository;
 import com.example.shoppingMall.repository.WishListRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -11,12 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WishService {
 
     @Autowired
     WishListRepository wishListRepository;
+
+    @Autowired
+    UserInfoRepository userInfoRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     @PersistenceContext
@@ -37,5 +48,15 @@ public class WishService {
 
     public void removeItem(Long itemId) {
         wishListRepository.deleteById(itemId);
+    }
+
+
+    public WishList add(String user, Long productCode) {
+        UserInfo userInfo = userInfoRepository.findByUserId(user);
+        Product product = productRepository.findByProductCode(productCode);
+        WishList wishList = new WishList();
+        wishList.setProduct(product);
+        wishList.setUserInfo(userInfo);
+        return wishListRepository.save(wishList);
     }
 }

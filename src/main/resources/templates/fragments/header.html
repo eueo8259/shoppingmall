@@ -44,7 +44,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">공지사항</a></li>
                         <li><a class="dropdown-item" href="#">이벤트</a></li>
-                        <li><a class="dropdown-item" href="#">문의게시판</a></li>
+                        <li><a class="dropdown-item" th:href="@{/board}">문의게시판</a></li>
                     </ul>
                 </li>
 <!--                <li class="nav-item">
@@ -62,11 +62,11 @@
                 </button>
                 <a role="button" id="login" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{user/login}">로그인</a>
+                   th:href="@{/user/login}">로그인</a>
 
                 <a role="button" id="signUp" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{user/signUp}">회원가입</a>
+                   th:href="@{/user/signUp}">회원가입</a>
 
                 <a role="button" id="loginout" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="isAuthenticated()"

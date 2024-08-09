@@ -1,4 +1,5 @@
 package com.example.shoppingMall.dto;
+import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.entity.Product;
 import com.example.shoppingMall.entity.ProductImg;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,11 @@ public class ProductDto {
     private BigDecimal productPrice;
     private String currency;
     private LocalDateTime productRegisterDate;
-    private String categoryCode;
+    private Category categoryCode;
     private String productStatus;
     private String mainImg;
     private List<String> imgList = new ArrayList<>();
     private String description;
     private double productRate; //평점
+
 }

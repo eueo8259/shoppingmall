@@ -1,5 +1,7 @@
 package com.example.shoppingMall.dto;
 
+import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WishListDto {
     private Long wishListCode;
-    private Long userInfoCode;
-    private Long productCode;
+    private UserInfo userInfoCode;
+    private Product productCode;
 }

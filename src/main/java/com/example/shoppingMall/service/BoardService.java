@@ -1,7 +1,68 @@
 package com.example.shoppingMall.service;
 
+import com.example.shoppingMall.dto.BulletinBoardDto;
+import com.example.shoppingMall.entity.BulletinBoard;
+import com.example.shoppingMall.entity.Cart;
+import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.UserInfo;
+import com.example.shoppingMall.repository.BulletinBoardRepository;
+import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repository.UserInfoRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 public class BoardService {
+    @Autowired
+    BulletinBoardRepository bulletinBoardRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    UserInfoRepository userInfoRepository;
+
+    public Page<BulletinBoard> findAll(Pageable pageable) {
+        return bulletinBoardRepository.findAll(pageable);
+    }
+
+    private static final int BAR_LENGTH = 5;
+
+    public List<Integer> getPaginationBarNumbers(int pageNumber, int totalPage) {
+        int startNumber = Math.max(pageNumber - (BAR_LENGTH / 2), 0);
+
+        int endNumber = Math.min(startNumber + BAR_LENGTH, totalPage);
+
+        return IntStream.range(startNumber, endNumber).boxed().toList();
+    }
+
+    public void insert(BulletinBoardDto bulletinBoardDto, String user) {
+        UserInfo userInfo = userInfoRepository.findByUserId(user);
+        Product product = productRepository.findByProductCode(bulletinBoardDto.getProductCode().getProductCode());
+        BulletinBoard bulletinBoard = new BulletinBoard();
+        bulletinBoard.setBoardTitle(bulletinBoardDto.getBoardTitle());
+        bulletinBoard.setContent(bulletinBoardDto.getContent());
+        bulletinBoard.setViews(0);
+        bulletinBoard.setHasComment(false);
+        bulletinBoard.setUserInfo(userInfo);
+        bulletinBoard.setProduct(product);
+        bulletinBoardRepository.save(bulletinBoard);
+    }
+
+    @Transactional
+    public void upView(Long boardCode) {
+        bulletinBoardRepository.upView(boardCode);
+    }
+
+    public BulletinBoardDto findOne(Long boardCode) {
+        return bulletinBoardRepository.findById(boardCode)
+                .map(x-> BulletinBoardDto.fromBoardEntity(x))
+                .orElse(null);
+    }
 }
