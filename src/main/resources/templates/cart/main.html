@@ -7,6 +7,7 @@
     <title>장바구니</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Custom CSS -->
     <style>
         body {
@@ -159,7 +160,7 @@
                         <div class="position-relative">
                             <button type="button" class="btn btn-danger btn-sm position-absolute" onclick="removeItem(this)">&times;</button>
                         </div>
-<!--                        <img th:src="@{${item.product.mainImg}}" alt="Product Image" class="product-img">-->
+<!--                        <img th:src="@{${item.product.imgList}}" alt="Product Image" class="product-img">-->
                         <div class="card-body">
                             <h5 class="card-title" th:text="${item.product.productName}"></h5>
                             <p class="card-text">

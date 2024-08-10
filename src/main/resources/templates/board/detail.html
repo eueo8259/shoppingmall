@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>문의 상세</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -67,6 +68,41 @@
             <a class="btn btn-outline-success" th:href="@{/board}"><i class="fas fa-arrow-left"></i> 목록</a>
         </div>
     </div>
+    <!-- 답글 작성 폼 (관리자 전용) -->
+    <div th:if="${admin == 'admin'}" class="card">
+        <div class="card-body">
+            <h5 class="card-title">답글 작성</h5>
+            <!-- 조건을 추가하여 답글 작성 폼의 표시 여부 결정 -->
+            <div th:if="${board.hasComment == false}">
+                <form th:action="@{/board/comment}" method="post" th:object="${comment}">
+                    <div class="form-group">
+                        <label for="replyContent">답글 내용</label>
+                        <textarea id="replyContent" name="commentText" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <input type="hidden" name="boardCode" th:value="${board.boardCode}">
+                    <input type="hidden" name="admin" th:value="${admin}" >
+                    <button type="submit" class="btn btn-primary">답글 작성</button>
+                </form>
+            </div>
+            <div th:unless="${board.hasComment == false}">
+                <p class="text-muted">이미 답글이 작성된 게시글입니다.</p>
+                <p th:text="${comment.commentText}"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 답글 읽기 폼 (관리자가 아닐 때) -->
+    <div th:unless="${admin == 'admin'}" class="card">
+        <div class="card-body">
+            <h5 class="card-title">답글</h5>
+            <p th:if="${comment == null}" class="text-muted">아직 답글이 없습니다.</p>
+            <div th:unless="${comment == null}" class="read-only">
+                <p th:text="${comment.commentText}"></p>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
