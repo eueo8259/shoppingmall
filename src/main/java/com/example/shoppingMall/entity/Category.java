@@ -7,10 +7,10 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Category {
     @Id

@@ -47,16 +47,26 @@ VALUES
 
 INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name, default_yn)
 VALUES
-('3', '1' ,'00000','서울', '010-1111-1111','가', 'Y'),
+('3', '1' ,'03461','서울특별시 은평구 은평로 111', '010-1111-1111','가', 'Y'),
 ('4', '2' ,'11111','인천', '010-1111-2222','나', 'Y'),
 ('5', '3' ,'22222','부산', '010-1111-3333','다', 'Y'),
 ('3', '4' ,'10414','경기도 고양시 일산동구 중앙로 1193', '010-1111-1111','가', 'N');
 
-INSERT INTO orders (order_code, product_code, user_info_code, order_quantity, order_status, delivery_code)
+INSERT INTO orders (order_date, order_code, user_info_code, payment_price, discount_amount,  delivery_code)
 VALUES
-('1', '1' ,'3', '4','배송중', '1'),
-('2', '2' ,'4', '5','준비중', '2'),
-('3', '3' ,'5', '6','배송완료', '3');
+('2024-08-01', '1', '3', '10000', '-500', '1'),
+('2024-08-01', '2', '4', '11000', '-1000', '1'),
+('2024-08-02', '3', '3', '14000', '-1000', '1'),
+('2024-08-05', '4', '3', '35000', '-2000', '1');
+
+INSERT INTO order_detail (order_num, order_code, product_code, order_quantity, order_price, order_status)
+VALUES
+('1', '1', '3', '1', '10500', "배송완료"),
+('2', '2', '5', '1', '12000', "배송완료"),
+('3', '3', '4', '1', '15000', "배송완료"),
+('4', '4', '4', '1', '10000', "배송중"),
+('5', '4', '5', '1', '20000', "배송중"),
+('6', '4', '6', '2', '17000', "배송중");
 
 INSERT INTO cart (product_code, user_info_code, quantity)
 VALUES
@@ -86,7 +96,25 @@ VALUES
 INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
 VALUES
 (1, 3 ,'2024-08-05 09:00:00', 30000, 0, '포인트충전'),
-(2, 3 ,'2024-08-05 09:15:00', 0, 35000, '주문번호:test1111'),
+(2, 3 ,'2024-08-05 09:15:00', 0, 35000, '주문번호: 3'),
 (3, 3 ,'2024-08-05 09:20:00', 200, 0, '리뷰이벤트적립금');
+
+INSERT INTO coupon (coupon_code, category_code, discount_rate, discount_amount)
+VALUES
+(1, 1 , 0.1, 0),
+(2, 2 , 0, 2000),
+(3, 3 , 0.15, 0),
+(4, 1 , 0, 10000),
+(5, 3 , 0, 5000);
+
+INSERT INTO user_coupon (user_coupon_code, user_info_code, coupon_code)
+VALUES
+(1, 3, 1),
+(2, 4, 2),
+(3, 5, 3),
+(4, 3, 1),
+(5, 3, 2),
+(6, 3, 3);
+
 
 

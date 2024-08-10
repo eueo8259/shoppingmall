@@ -2,14 +2,14 @@ package com.example.shoppingMall.dto;
 
 import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.entity.Users;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoDto {

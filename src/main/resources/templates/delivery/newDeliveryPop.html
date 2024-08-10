@@ -11,10 +11,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript" th:src="@{/js/address.js}" async></script>
+    <script type="text/javascript" th:src="@{/js/order.js}" async></script>
 </head>
 <style>
     .container {
-        width: 30%;
+        width: 100%;
     }
     .header-title {
         font-weight: bold;
@@ -50,29 +51,25 @@
     }
 </style>
 <body>
-<th:block th:replace="~{fragments/header :: header}"></th:block>
 <div class="container">
     <hr>
     <div class="charge-container">
         <br>
-        <p th:if="${deliveryDto.deliveryCode == null}" class="header-title">배송지 등록</p>
-        <p th:if="${deliveryDto.deliveryCode != null}" class="header-title">배송지 수정</p>
+        <p class="header-title">배송지 등록</p>
         <br>
-        <form id="form" th:action="@{/delivery/save}" method="post" >
-            <input th:if="${deliveryDto.deliveryCode != null}" type="hidden" name="deliveryCode" th:value="${deliveryDto.deliveryCode}">
-            <input type="hidden" name="username" th:value="${username}">
+            <input type="hidden" name="username" id="username" th:value="${username}">
             <div class="mb-3" style="width: 70%; margin: auto;">
                 <label style="margin-bottom: 20px; font-weight: bold; font-size: 17px; color: #828282;">[수령인 정보]</label>
-                <input type="text" class="form-control" th:field="${deliveryDto.contactName}" placeholder="이름" id="contactName" name="contactName" aria-label="contactName" style="margin-bottom: 16px;">
-                <input type="text" class="form-control" th:field="${deliveryDto.contactNumber}" placeholder="연락처" id="contactNumber" name="contactNumber" aria-label="contactNumber">
+                <input type="text" class="form-control"  placeholder="이름" id="contactName" name="contactName" aria-label="contactName" style="margin-bottom: 16px;">
+                <input type="text" class="form-control"  placeholder="연락처" id="contactNumber" name="contactNumber" aria-label="contactNumber">
             </div>
             <div class="input-group mb-3" style="width: 70%; margin: auto;">
-                <input type="text" class="form-control" th:field="${deliveryDto.postalCode}" id="postcode" name="postalCode" placeholder="우편번호" style="width: 60%;">
+                <input type="text" class="form-control"  id="postcode" name="postalCode" placeholder="우편번호" style="width: 60%;">
                 <input type="button" class="form-control" onclick="execDaumPostcode()" value="우편번호 찾기" style="width: 40%; background-color: #dcdcdc;">
             </div>
             <div style="width: 70%; margin: auto;">
-                <input type="text" class="form-control" th:value="${address}" id="address" placeholder="주소" style="margin-bottom: 16px;">
-                <input type="text" class="form-control" th:value="${detailAddress}" id="detailAddress" placeholder="상세주소" style="margin-bottom: 16px;">
+                <input type="text" class="form-control" id="address" placeholder="주소" style="margin-bottom: 16px;">
+                <input type="text" class="form-control" id="detailAddress" placeholder="상세주소" style="margin-bottom: 16px;">
                 <input type="text" class="form-control" id="extraAddress" placeholder="" style="margin-bottom: 16px;">
                 <input type="hidden" id="deliveryAddress" name="address">
             </div>
@@ -88,11 +85,9 @@
             </div>
             <br>
             <div style="text-align: center;">
-                <button type="button" class="btn btn-outline-success me-2 btn-sm" style="width: 14%;" id="deliverySave">저장</button>
-                <a th:href="@{/delivery/list}" type="button" class="btn btn-outline-secondary me-2 btn-sm">돌아가기</a>
+                <button type="button" class="btn btn-outline-success me-2 btn-sm" style="width: 14%;" id="newDeliverySave">저장</button>
             </div>
             <br>
-        </form>
     </div>
 
 </div>

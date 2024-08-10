@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -70,5 +71,15 @@ public class CartService {
     @Transactional
     public void removeItem(Long itemId) {
         cartRepository.deleteById(itemId);
+    }
+
+    public List<Cart> findCartCodes(Long[] orderItems) {
+        List<Cart> cartList = new ArrayList<>();
+        Cart cart = new Cart();
+        for(Long item : orderItems) {
+            cart = cartRepository.findById(item).orElse(null);
+            cartList.add(cart);
+        }
+        return cartList;
     }
 }

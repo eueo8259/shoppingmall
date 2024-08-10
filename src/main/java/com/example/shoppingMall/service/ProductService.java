@@ -349,4 +349,14 @@ public class ProductService {
 
     }
 
+    public void buyProduct(Long productCode, int orderQuantity) {
+        productRepository.updateQuantity(productCode, orderQuantity);
+        Product product = productRepository.findById(productCode).orElse(null);
+        if(product.getProductQuantity() == 0){
+            product.setStatus("판매종료");
+        }
+    }
+    public Product findOrderItem(Long orderItem) {
+        return productRepository.findById(orderItem).orElse(null);
+    }
 }

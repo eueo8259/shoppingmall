@@ -177,19 +177,22 @@
 </head>
 <body>
 <th:block th:replace="~{fragments/header :: header}"></th:block>
-
 <div class="container">
     <div class="product-info">
-        <div class="product-name" th:text="${productDto.productName}">상품 이름</div>
-        <div class="product-price" id="price" th:text="${productDto.productPrice} + '원'">상품 가격</div>
-        <div class="quantity-selector">
-            <label for="quantity">수량:</label>
-            <div class="quantity-controls">
-                <button type="button" id="decrease">-</button>
-                <input type="number" id="quantity" name="quantity" min="1" value="1">
-                <button type="button" id="increase">+</button>
+        <form id="orderForm" th:action="@{/order/direct}" method="get">
+            <div class="product-name" th:text="${productDto.productName}">상품 이름</div>
+            <div class="product-price" id="price" th:text="${productDto.productPrice} + '원'">상품 가격</div>
+            <div class="quantity-selector">
+                <label for="quantity">수량:</label>
+                <div class="quantity-controls">
+                    <button type="button" id="decrease">-</button>
+                    <input type="number" id="quantity" name="quantity" min="1" value="1">
+                    <button type="button" id="increase">+</button>
+                </div>
             </div>
-        </div>
+            <input type="hidden" name="productCode" th:value="${productDto.productCode}">
+            <input type="hidden" name="username" th:value="${username}">
+        </form>
         <button class="button" id="add-to-cart">장바구니에 추가</button>
         <button class="button" id="buy-now">지금 구매</button>
     </div>
@@ -235,6 +238,17 @@
 
         // Initial price formatting
         updatePrice();
+
+        function directOrder() {
+            var form = document.getElementById("orderForm");
+            if(confirm("주문/결제 페이지로 이동합니다.")) {
+                form.submit();
+                return true;
+            }
+        }
+        const buyNowButton = document.getElementById('buy-now');
+        buyNowButton.addEventListener('click', directOrder);
+
     });
 </script>
 </body>

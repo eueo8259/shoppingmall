@@ -2,6 +2,9 @@ package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
@@ -10,7 +13,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

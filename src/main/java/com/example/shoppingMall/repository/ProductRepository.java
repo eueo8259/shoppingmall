@@ -9,7 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -20,4 +24,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
     @Query(value = "SELECT * FROM product WHERE status = '대기'", nativeQuery = true)
     Page<Product> getProductsAwaitingApproval(Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update product pq set pq.product_quantity = pq.product_quantity - :orderQuantity where product_code = :productCode", nativeQuery = true)
+    void updateQuantity(@Param("productCode")Long productCode,
+                        @Param("orderQuantity") int orderQuantity);
 }

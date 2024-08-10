@@ -66,7 +66,15 @@ public class UserService {
         UserInfo userInfo = UserInfoDto.toUserInfoEntity(userInfoDto);
         userInfoRepository.save(userInfo);
     }
-    public void userInsert(UserDto userDto) {
+    public void userInsert(UserInfoDto userInfoDto, String role) {
+        UserDto userDto = new UserDto();
+        userDto.setId(userInfoDto.getUser().getId());
+        userDto.setPassword(userInfoDto.getUser().getPassword());
+        if(role.equals("user")){
+            userDto.setUserRole(UserRole.USER);
+        } else if (role.equals("seller")){
+            userDto.setUserRole(UserRole.TEMP);
+        }
         String password = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(password);
         Users user = UserDto.toUserEntity(userDto);
@@ -80,6 +88,10 @@ public class UserService {
     public UserInfo findByUserId(String userId) {
         UserInfo userInfo = userInfoRepository.findByUserId(userId);
         return userInfo;
+    }
+
+    public UserInfoDto findUserInfo(String userId){
+        return UserInfoDto.fromUserInfoEntity(findByUserId(userId));
     }
 
     public String findUserId(String userName, String rrn, String phoneNumber) {
@@ -103,7 +115,7 @@ public class UserService {
     }
 
     public List<UserInfoDto> userListAll() {
-        return userInfoRepository.findAll().stream().map(x -> UserInfoDto.fromUserInfoEntity(x))
+        return userInfoRepository.findAll().stream().map(UserInfoDto::fromUserInfoEntity)
                 .filter(userInfoDto -> userInfoDto.getUser().getUserRole() != UserRole.ADMIN)
                 .collect(Collectors.toList());
     }
@@ -145,4 +157,30 @@ public class UserService {
         return null;
     }
 
+
+    public UserInfoDto findUserInfo(Long userInfoCode) {
+        return userInfoRepository.findById(userInfoCode).map(UserInfoDto::fromUserInfoEntity).orElse(null);
+    }
+
+    public Boolean passwordCheck(String userId, String password) {
+        Users user = userRepository.findById(userId).orElse(null);
+        Boolean response = passwordEncoder.matches(password, user.getPassword());
+        return response;
+    }
+
+    public void userInfoModify(UserInfoDto userInfoDto, String applySeller, String password) {
+        UserInfo userInfo = userInfoRepository.findById(userInfoDto.getUserInfoCode()).orElse(null);
+        userInfo.setPhoneNumber(userInfoDto.getPhoneNumber());
+        userInfo.setEmail(userInfoDto.getEmail());
+        if(applySeller.equals("apply")) {
+            userInfo.getUser().setUserRole(UserRole.valueOf("TEMP"));
+        } else if (applySeller.equals("cancel")){
+            userInfo.getUser().setUserRole(UserRole.valueOf("USER"));
+        }
+        if(password != null) {
+            userInfo.getUser().setPassword(passwordEncoder.encode(password));
+        }
+        userRepository.save(userInfo.getUser());
+        userInfoRepository.save(userInfo);
+    }
 }
