@@ -20,6 +20,7 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Users> user = userRepository.findById(username);
@@ -36,4 +37,5 @@ public class UserDetailService implements UserDetailsService {
 
         return new PrincipalDetails(userAccount);
     }
+
 }

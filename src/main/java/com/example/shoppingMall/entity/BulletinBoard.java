@@ -1,8 +1,12 @@
 package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class BulletinBoard {
     @Id
     private Long boardCode;

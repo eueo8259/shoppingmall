@@ -28,7 +28,7 @@ public class UserInfo {
     private LocalDate birthDate;
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
-    private String grade = "일반";
+    private String grade ="일반";
     @ManyToOne
     @JoinColumn(name = "id")
     private Users user;

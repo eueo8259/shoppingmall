@@ -1,5 +1,6 @@
 package com.example.shoppingMall.service;
 
+import com.example.shoppingMall.configuration.PrincipalDetails;
 import com.example.shoppingMall.constant.UserRole;
 import com.example.shoppingMall.dto.UserDto;
 import com.example.shoppingMall.dto.UserInfoDto;
@@ -7,8 +8,11 @@ import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.entity.Users;
 import com.example.shoppingMall.repository.UserInfoRepository;
 import com.example.shoppingMall.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    EntityManager em;
 
     public void userInfoInsert(UserInfoDto userInfoDto) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -133,6 +139,24 @@ public class UserService {
         findUserInfo.setIsActive(isActive);
         userInfoRepository.save(findUserInfo);
     }
+
+    public UserInfoDto loginUserInfoDto() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
+
+            // 여기서 userDetails에서 사용자 정보 추출
+            Users user = userDetails.getUsers();
+
+            UserInfo userInfo = userInfoRepository.findByUserId(user.getId());
+            UserInfoDto userInfoDto = UserInfoDto.fromUserInfoEntity(userInfo);
+
+            System.out.println("========================" + userInfoDto.getUserInfoCode());
+            return userInfoDto;
+        }
+        return null;
+    }
+
 
     public UserInfoDto findUserInfo(Long userInfoCode) {
         return userInfoRepository.findById(userInfoCode).map(UserInfoDto::fromUserInfoEntity).orElse(null);
