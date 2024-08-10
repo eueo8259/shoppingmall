@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -336,5 +337,8 @@ public class ProductService {
     }
     public Product findOrderItem(Long orderItem) {
         return productRepository.findById(orderItem).orElse(null);
+    }
+    public List<Map<String, String>> getName() {
+        return productRepository.findGetName();
     }
 }

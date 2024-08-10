@@ -4,7 +4,11 @@ import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.dto.CartDto;
 import com.example.shoppingMall.entity.Cart;
 import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.repository.CartRepository;
+import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repository.UserInfoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -25,6 +29,12 @@ public class CartService {
     CartRepository cartRepository;
 
     @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    UserInfoRepository userInfoRepository;
+
+    @Autowired
     @PersistenceContext
     EntityManager em;
 
@@ -35,6 +45,7 @@ public class CartService {
         String sql = "SELECT c FROM Cart c WHERE c.userInfo.user.id = :user";
         TypedQuery<Cart> query = em.createQuery(sql, Cart.class).setParameter("user", user);
         List<Cart> cart = null;
+
         try {
             cart = query.getResultList();
             for (Cart c : cart){
@@ -76,5 +87,16 @@ public class CartService {
             cartList.add(cart);
         }
         return cartList;
+    }
+
+
+    public Cart add(String user, Long productCode) {
+        UserInfo userInfo = userInfoRepository.findByUserId(user);
+        Product product = productRepository.findByProductCode(productCode);
+        Cart cart = new Cart();
+        cart.setProduct(product);
+        cart.setQuantity(1);
+        cart.setUserInfo(userInfo);
+        return cartRepository.save(cart);
     }
 }
