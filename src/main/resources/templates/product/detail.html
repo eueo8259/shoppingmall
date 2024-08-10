@@ -194,6 +194,17 @@
             <input type="hidden" name="username" th:value="${username}">
         </form>
         <button class="button" id="add-to-cart">장바구니에 추가</button>
+
+        <form th:action="@{/cart/add-cart/{addCart}(addCart=${productDto.productCode})}" method="post">
+            <input type="hidden" name="productCode" th:value="${productDto.productCode}">
+            <button type="submit">🛒 장바구니</button>
+        </form>
+
+        <form th:action="@{/wish/add-wish/{wish}(wish=${productDto.productCode})}" method="post">
+            <input type="hidden" name="productCode" th:value="${productDto.productCode}">
+            <button type="submit">❤ 위시리스트</button>
+        </form>
+
         <button class="button" id="buy-now">지금 구매</button>
     </div>
     <div class="main-image">

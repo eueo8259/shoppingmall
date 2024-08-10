@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>문의하기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#confirmButton').click(function() {
+                let isValid = true;
+                let errorMessage = '';
+
+                // 제목 유효성 검사
+                if ($('#boardTitle').val() === '1') {
+                    isValid = false;
+                    errorMessage += '제목을 선택하세요.\n';
+                }
+
+                // 문의 내용 유효성 검사
+                if ($('#content').val().trim() === '') {
+                    isValid = false;
+                    errorMessage += '문의 내용을 입력하세요.\n';
+                }
+
+                if (isValid) {
+                    // 모든 필드가 유효하면 확인 메시지
+                    alert('모든 정보가 올바르게 입력되었습니다.');
+                    // 제출 버튼 활성화
+                    $('button[type="submit"]').prop('disabled', false);
+                } else {
+                    // 오류 메시지
+                    alert(errorMessage);
+                    // 제출 버튼 비활성화
+                    $('button[type="submit"]').prop('disabled', true);
+                }
+            });
+
+            // 초기에는 제출 버튼을 비활성화 상태로 설정
+            $('button[type="submit"]').prop('disabled', true);
+        });
+    </script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h3 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .form-container {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .breadcrumb {
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="header">
+        <h3><i class="fas fa-pencil-alt icon"></i> 문의하기</h3>
+    </div>
+    <div class="card mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}"><i class="fas fa-home"></i> 홈</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/board}"><i class="fas fa-question-circle"></i> 문의 게시판</a></li>
+                <li class="breadcrumb-item active" aria-current="page">문의하기</li>
+            </ol>
+        </nav>
+        <div class="card-body">
+            <h4><i class="fas fa-info-circle icon"></i> 문의내용 작성해주세요</h4>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="form-container">
+            <form id="contactForm" th:action="@{/board/insert}" method="post">
+                <div class="form-group">
+                    <label for="boardTitle">제목</label>
+                    <select class="form-select" id="boardTitle" name="boardTitle">
+                        <option value="1" disabled selected>제목을 선택하세요</option>
+                        <option value="주문 문제">주문 문제</option>
+                        <option value="배송 및 배달">배송 및 배달</option>
+                        <option value="반품 및 환불">반품 및 환불</option>
+                        <option value="제품 및 재고">제품 및 재고</option>
+                        <option value="내 계정 관리">내 계정 관리</option>
+                        <option value="결제 및 프로모션">결제 및 프로모션</option>
+                        <option value="보안">보안</option>
+                        <option value="상품 요청">상품 요청</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="product" class="form-label">상품</label>
+                    <select class="form-select" id="product" name="productCode">
+                        <option value="999" selected>상품을 선택하세요</option>
+                        <option th:each="product : ${product}"
+                                th:value="${product.productCode}"
+                                th:text="${product.productName}">
+                            상품 옵션
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="content">문의 내용</label>
+                    <textarea class="form-control" id="content" name="content" rows="6" placeholder="문의 내용을 입력하세요"></textarea>
+                </div>
+                <div class="footer">
+                    <button type="button" id="confirmButton" class="btn btn-secondary"><i class="fas fa-check-circle icon"></i> 확인</button>
+                    <button type="submit" class="btn btn-primary" disabled><i class="fas fa-paper-plane icon"></i> 제출하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

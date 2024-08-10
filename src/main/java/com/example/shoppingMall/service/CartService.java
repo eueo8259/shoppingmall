@@ -3,7 +3,11 @@ package com.example.shoppingMall.service;
 import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.entity.Cart;
 import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.Product;
+import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.repository.CartRepository;
+import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repository.UserInfoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -23,6 +27,12 @@ public class CartService {
     CartRepository cartRepository;
 
     @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    UserInfoRepository userInfoRepository;
+
+    @Autowired
     @PersistenceContext
     EntityManager em;
 
@@ -40,6 +50,7 @@ public class CartService {
                 .setParameter("userId", user)
                 .setParameter("imgPattern", "%main%");
         List<Cart> cart = null;
+
         try {
             cart = query.getResultList();
             for (Cart c : cart){
@@ -71,6 +82,17 @@ public class CartService {
     @Transactional
     public void removeItem(Long itemId) {
         cartRepository.deleteById(itemId);
+    }
+
+
+    public Cart add(String user, Long productCode) {
+        UserInfo userInfo = userInfoRepository.findByUserId(user);
+        Product product = productRepository.findByProductCode(productCode);
+        Cart cart = new Cart();
+        cart.setProduct(product);
+        cart.setQuantity(1);
+        cart.setUserInfo(userInfo);
+        return cartRepository.save(cart);
     }
 
     public List<Cart> findCartCodes(Long[] orderItems) {

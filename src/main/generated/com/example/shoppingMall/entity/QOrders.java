@@ -24,15 +24,13 @@ public class QOrders extends EntityPathBase<Orders> {
 
     public final QDelivery delivery;
 
+    public final NumberPath<Integer> discountAmount = createNumber("discountAmount", Integer.class);
+
     public final NumberPath<Long> orderCode = createNumber("orderCode", Long.class);
 
-    public final DatePath<java.time.LocalDate> orderDate = createDate("orderDate", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> orderDate = createDateTime("orderDate", java.time.LocalDateTime.class);
 
-    public final NumberPath<Integer> orderQuantity = createNumber("orderQuantity", Integer.class);
-
-    public final StringPath orderStatus = createString("orderStatus");
-
-    public final QProduct product;
+    public final NumberPath<Integer> paymentPrice = createNumber("paymentPrice", Integer.class);
 
     public final QUserInfo userInfo;
 
@@ -55,7 +53,6 @@ public class QOrders extends EntityPathBase<Orders> {
     public QOrders(Class<? extends Orders> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.delivery = inits.isInitialized("delivery") ? new QDelivery(forProperty("delivery"), inits.get("delivery")) : null;
-        this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
         this.userInfo = inits.isInitialized("userInfo") ? new QUserInfo(forProperty("userInfo"), inits.get("userInfo")) : null;
     }
 

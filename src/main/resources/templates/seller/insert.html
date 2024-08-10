@@ -57,7 +57,7 @@
         <option value="AUD">AUD</option>
     </select><br>
     <label>카테고리</label>
-    <select id="location" th:field="${productDto.categoryCode}" name="location">
+    <select id="location" th:field="${productDto.categoryCode.categoryCode}" name="location">
         <option selected value="">상품의 카테고리를 선택해주세요</option>
         <option th:each="categoryDtoList : ${categoryDtoList}"
                 th:value="${categoryDtoList.categoryCode}"
@@ -151,21 +151,6 @@
         });
     }
 
-<!--    function uploadData() {-->
-<!--        const formData = new FormData(document.getElementById('frm'));-->
-
-<!--        axios.post('/product/insert', formData, {-->
-<!--            headers: {-->
-<!--                'Content-Type': 'multipart/form-data'-->
-<!--            }-->
-<!--        })-->
-<!--        .then(response => {-->
-<!--            console.log('Data uploaded successfully');-->
-<!--        })-->
-<!--        .catch(error => {-->
-<!--            console.error('Error uploading data', error);-->
-<!--        });-->
-<!--    }-->
 </script>
 </body>
 </html>

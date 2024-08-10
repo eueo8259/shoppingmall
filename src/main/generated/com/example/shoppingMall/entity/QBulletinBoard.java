@@ -24,6 +24,8 @@ public class QBulletinBoard extends EntityPathBase<BulletinBoard> {
 
     public final NumberPath<Long> boardCode = createNumber("boardCode", Long.class);
 
+    public final StringPath boardTitle = createString("boardTitle");
+
     public final StringPath content = createString("content");
 
     public final BooleanPath hasComment = createBoolean("hasComment");

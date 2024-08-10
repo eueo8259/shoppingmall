@@ -53,7 +53,7 @@ public class SellerController {
                          @RequestParam("mainImage") MultipartFile mainImg,
                          @RequestParam("subImages")List<MultipartFile> subImg) throws IOException {
         UserInfoDto userInfoDto = userService.loginUserInfoDto();
-
+        productDto.setProductStatus("대기");
         productDto.setUserInfoCode(userInfoDto.getUserInfoCode());
         productService.insertProduct(productDto, mainImg, subImg);
         return "redirect:/seller/list";

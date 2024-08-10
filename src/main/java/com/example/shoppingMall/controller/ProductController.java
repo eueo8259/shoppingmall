@@ -35,13 +35,6 @@ public class ProductController {
         this.userService = userService;
     }
 
-    @GetMapping("test")
-    public String test(Model model){
-        List<Category> categoryList = productService.categoryList();
-        model.addAttribute("categoryList", categoryList);
-        return "product/test";
-    }
-
     @GetMapping("product/list")
     public String productCategoryPage(@RequestParam("categoryCode") String categoryCode,
                                       @PageableDefault(page = 0, size = 6, sort = "product_code",
@@ -89,6 +82,10 @@ public class ProductController {
         System.out.println("===================update메서드 종료========================");
         return "redirect:/seller/list";
     }
+
+
+
+
 
 
 

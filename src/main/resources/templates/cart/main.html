@@ -145,6 +145,7 @@
             });
             $('.total-price span').text(formatCurrency(total));
         }
+
     $(document).ready(function() {
         updatePrices();  // 페이지 로드 시 초기 가격 업데이트
 
@@ -192,7 +193,7 @@
                                 <input type="checkbox" class="check" name="cartCodes" th:value="${item.cartCode}" id="choice">
                                 <button type="button" class="btn btn-danger btn-sm position-absolute" onclick="removeItem(this)">&times;</button>
                             </div>
-                            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
+                            <img th:src="@{${item.product.imgList[0].imgUrl}}" alt="Product Image" class="product-img">
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${item.product.productName}"></h5>
                                 <p class="card-text">
@@ -224,7 +225,7 @@
         </div>
     </div>
     <div class="text-center">
-        <button type="button" class="btn btn-outline-success" id="orderBtn">주문 및 결제</button>
+        <a class="btn btn-outline-success" th:href="@{/}">주문 및 결제</a>
     </div>
 </div>
 </body>

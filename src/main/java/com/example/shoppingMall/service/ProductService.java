@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -62,7 +63,7 @@ public class ProductService {
     public void insertProduct(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
 
         Product product = new Product();
-        Category category = em.find(Category.class, productDto.getCategoryCode());
+        Category category = em.find(Category.class, productDto.getCategoryCode().getCategoryCode());
         UserInfo userInfo = em.find(UserInfo.class, productDto.getUserInfoCode());
 
         product.setProductName(productDto.getProductName());
@@ -72,6 +73,7 @@ public class ProductService {
         product.setCategory(category);
         product.setProductRegisterDate(LocalDateTime.now());
         product.setUserInfo(userInfo);
+        product.setStatus(productDto.getProductStatus());
         product.setDescription(productDto.getDescription());
         product.setImgList(new ArrayList<>());
 
@@ -243,7 +245,7 @@ public class ProductService {
         productDto.setUserInfoCode(product.getUserInfo().getUserInfoCode());
         productDto.setProductStatus(product.getStatus());
         productDto.setDescription(product.getDescription());
-        productDto.setCategoryName(product.getCategory().getCategoryName());
+        productDto.setCategoryCode(product.getCategory());
         productDto.setImgList(new ArrayList<>());
         for (ProductImg image : product.getImgList()) {
             if (image.getImgUrl().contains("main")) {
@@ -342,7 +344,7 @@ public class ProductService {
         Page<Product> productPage = productCustomRepository.findProductListByCategory(categoryCode, pageable);
 
         List<ProductDto> productDtoList = productPage.getContent().stream()
-                .map(this::productDtoFromEntity)
+                .map(x -> productDtoFromEntity(x))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
@@ -358,5 +360,8 @@ public class ProductService {
     }
     public Product findOrderItem(Long orderItem) {
         return productRepository.findById(orderItem).orElse(null);
+    }
+    public List<Map<String, String>> getName() {
+        return productRepository.findGetName();
     }
 }
