@@ -30,6 +30,8 @@ public class QReview extends EntityPathBase<Review> {
 
     public final StringPath reviewText = createString("reviewText");
 
+    public final StringPath reviewTitle = createString("reviewTitle");
+
     public final QUserInfo userInfo;
 
     public QReview(String variable) {

@@ -15,5 +15,4 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
     Long findCode(@Param("userInfoCode") Long userInfoCode);
 
     List<Orders> findByUserInfo_userInfoCode(@Param("userInfoCode")Long userInfoCode);
-
 }

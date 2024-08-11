@@ -29,5 +29,5 @@ public class ProductDto {
     private List<String> imgList = new ArrayList<>();
     private String description;
     private double productRate; //평점
-
+    private int SalesStatus; //판매현황
 }

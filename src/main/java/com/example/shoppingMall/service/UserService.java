@@ -4,11 +4,14 @@ import com.example.shoppingMall.configuration.PrincipalDetails;
 import com.example.shoppingMall.constant.UserRole;
 import com.example.shoppingMall.dto.UserDto;
 import com.example.shoppingMall.dto.UserInfoDto;
+import com.example.shoppingMall.entity.OrderDetail;
 import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.entity.Users;
 import com.example.shoppingMall.repository.UserInfoRepository;
 import com.example.shoppingMall.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -182,5 +185,14 @@ public class UserService {
         }
         userRepository.save(userInfo.getUser());
         userInfoRepository.save(userInfo);
+    }
+    @Transactional
+    public void pointReturn(Long orderNum) {
+        OrderDetail orderDetail = em.find(OrderDetail.class, orderNum);
+        UserInfo userInfo = orderDetail.getOrders().getUserInfo();
+
+        int returnPoint = userInfo.getCurrentPoint() + orderDetail.getOrderPrice();
+        userInfo.setCurrentPoint(returnPoint);
+        em.merge(userInfo);
     }
 }

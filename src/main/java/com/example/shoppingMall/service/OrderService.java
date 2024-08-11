@@ -5,7 +5,12 @@ import com.example.shoppingMall.dto.OrderDto;
 import com.example.shoppingMall.dto.ProductDto;
 import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -19,6 +24,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class OrderService {
+    @Autowired
+    EntityManager em;
     @Autowired
     OrderRepository orderRepository;
     @Autowired
@@ -116,5 +123,39 @@ public class OrderService {
         orderDetailDto.setProduct(product);
         orderDetailDto.setOrderQuantity(quantity);
         return orderDetailDto;
+    }
+    @Transactional
+    public List<OrderDetailDto> findReturnProductList(Long code) {
+        String sql = "SELECT o FROM OrderDetail o WHERE o.orderStatus = :keyword " +
+                "AND o.product.userInfo.userInfoCode = :userInfoCode";
+        TypedQuery<OrderDetail> query = em.createQuery(sql, OrderDetail.class);
+        query.setParameter("userInfoCode", code);
+        query.setParameter("keyword", "반품요청");
+        List<OrderDetail> ordersList = query.getResultList();
+
+        List<OrderDetailDto> orderDetailDtoList = ordersList.stream().map(OrderDetailDto::fromOrderDetailEntity).toList();
+        log.info(orderDetailDtoList.toString());
+        return orderDetailDtoList;
+    }
+    @Transactional
+    public List<OrderDetailDto> findDeliveryProductList(Long code) {
+        String sql = "SELECT o FROM OrderDetail o WHERE o.orderStatus = :keyword " +
+                "AND o.product.userInfo.userInfoCode = :userInfoCode";
+        TypedQuery<OrderDetail> query = em.createQuery(sql, OrderDetail.class);
+        query.setParameter("userInfoCode", code);
+        query.setParameter("keyword", "주문완료");
+        List<OrderDetail> ordersList = query.getResultList();
+
+        List<OrderDetailDto> orderDetailDtoList = ordersList.stream().map(OrderDetailDto::fromOrderDetailEntity).toList();
+        log.info(orderDetailDtoList.toString());
+        return orderDetailDtoList;
+    }
+
+    @Transactional
+    public void productStatusChange(Long orderNum, String keyword) {
+
+        OrderDetail orderDetail = em.find(OrderDetail.class, orderNum);
+        orderDetail.setOrderStatus(keyword);
+        em.merge(orderDetail);
     }
 }

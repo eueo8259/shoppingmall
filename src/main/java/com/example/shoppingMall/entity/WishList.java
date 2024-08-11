@@ -2,6 +2,8 @@ package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @AllArgsConstructor
@@ -19,5 +21,6 @@ public class WishList {
 
     @ManyToOne
     @JoinColumn(name = "productCode")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 }

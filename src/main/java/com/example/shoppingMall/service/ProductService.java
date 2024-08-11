@@ -2,15 +2,13 @@ package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.dto.ProductDto;
-import com.example.shoppingMall.entity.Category;
-import com.example.shoppingMall.entity.Product;
-import com.example.shoppingMall.entity.ProductImg;
-import com.example.shoppingMall.entity.UserInfo;
+import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.ProductRepository;
 import com.example.shoppingMall.repositoryCustom.ProductCustomRepository;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -36,6 +34,7 @@ import java.util.stream.IntStream;
 
 @Service
 @Data
+@Slf4j
 public class ProductService {
     @Autowired
     EntityManager em;
@@ -230,11 +229,11 @@ public class ProductService {
     public ProductDto productDtoFromEntity(Product product) {
 
         ProductDto productDto = new ProductDto();
+        System.out.println(product.toString());
 
         BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
                 .multiply(product.getProductPrice());
         BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
-
         productDto.setProductCode(product.getProductCode());
         productDto.setProductName(product.getProductName());
         productDto.setProductPrice(roundedPrice);
@@ -363,5 +362,31 @@ public class ProductService {
     }
     public List<Map<String, String>> getName() {
         return productRepository.findGetName();
+    }
+    @Transactional
+    public void productReturn(Long orderNum) {
+        OrderDetail orderDetail = em.find(OrderDetail.class, orderNum);
+        Product product = orderDetail.getProduct();
+        int returnQuantity = product.getProductQuantity() + 1;
+        product.setProductQuantity(returnQuantity);
+        em.merge(product);
+    }
+    @Transactional
+    public List<Object[]> findsalesStatusProduct(Long userInfoCode) {
+        String jpql = """
+            SELECT p, COUNT(o) as saleCount
+            FROM Product p
+            LEFT JOIN OrderDetail o ON p.productCode = o.product.productCode
+            WHERE o.orderStatus = '구매'
+            AND p.userInfo.userInfoCode = :userInfoCode
+            GROUP BY p.productCode
+            ORDER BY p.productCode DESC """;
+
+        TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+        query.setParameter("userInfoCode", userInfoCode);
+        List<Object[]> results = query.getResultList();
+        return results;
+
+
     }
 }

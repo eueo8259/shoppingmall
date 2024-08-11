@@ -2,12 +2,8 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.CategoryDto;
 import com.example.shoppingMall.dto.ProductDto;
-import com.example.shoppingMall.dto.UserInfoDto;
-import com.example.shoppingMall.entity.Category;
-import com.example.shoppingMall.service.CategoryService;
-import com.example.shoppingMall.service.ExchangeService;
-import com.example.shoppingMall.service.ProductService;
-import com.example.shoppingMall.service.UserService;
+import com.example.shoppingMall.dto.ReviewDto;
+import com.example.shoppingMall.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,12 +23,14 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final ReviewService reviewService;
 
-    public ProductController(ExchangeService exchangeService, ProductService productService, CategoryService categoryService, UserService userService) {
+    public ProductController(ExchangeService exchangeService, ProductService productService, CategoryService categoryService, UserService userService, ReviewService reviewService) {
         this.exchangeService = exchangeService;
         this.productService = productService;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("product/list")
@@ -55,7 +53,9 @@ public class ProductController {
     @GetMapping("product/detail/{productCode}")
     public String productDetail(@PathVariable("productCode") Long productCode, Model model){
         ProductDto productDto = productService.findProductOne(productCode);
+        List<ReviewDto> reviewDto = reviewService.findProductReview(productCode);
         model.addAttribute("productDto", productDto);
+        model.addAttribute("reviewDto", reviewDto);
         return "product/detail";
     }
 

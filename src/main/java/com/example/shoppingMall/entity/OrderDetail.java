@@ -3,6 +3,8 @@ package com.example.shoppingMall.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class OrderDetail {
     private Orders orders; // 주문번호
     @ManyToOne
     @JoinColumn(name = "productCode")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
     private int orderQuantity;
     private int orderPrice;
