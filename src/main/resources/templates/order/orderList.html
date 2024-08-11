@@ -35,9 +35,25 @@
     .no-border {
         border-bottom: none;
     }
-
     .orderCenter {
         vertical-align: middle;
+    }
+    .page-link {
+      color: #000;
+      background-color: #fff;
+      border: 1px solid #ccc;
+    }
+    .page-item.active .page-link {
+     z-index: 1;
+     color: #555;
+     font-weight:bold;
+     background-color: #f1f1f1;
+     border-color: #ccc;
+    }
+    .page-link:focus, .page-link:hover {
+      color: #000;
+      background-color: #fafafa;
+      border-color: #ccc;
     }
 </style>
 <body>
@@ -85,6 +101,21 @@
         </th:block>
         </tbody>
     </table>
+    <div aria-label="Page navigation" th:if="${orderList.hasContent()}">
+        <ul class="pagination justify-content-end">
+            <li class="page-item" th:classappend="${orderList.hasPrevious() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/order/list(page=${orderList.number - 1})}">Previous</a>
+            </li>
+            <th:block th:each="pageNumber : ${#numbers.sequence(0, orderList.totalPages - 1)}">
+                <li class="page-item" th:classappend="${orderList.number == pageNumber ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/order/list(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+            </th:block>
+            <li class="page-item" th:classappend="${orderList.hasNext() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/order/list(page=${orderList.number + 1})}">Next</a>
+            </li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

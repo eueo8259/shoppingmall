@@ -255,6 +255,7 @@ public class ProductService {
         productDto.setProductQuantity(product.getProductQuantity());
         productDto.setProductStatus(product.getStatus()); //나중에 상태값에 따라서 출력되고 출력되지않도록 쿼리문 수정
         productDto.setDescription(product.getDescription());
+        productDto.setCategoryCode(product.getCategory().getCategoryCode());
         productDto.setCategoryName(product.getCategory().getCategoryName());
         productDto.setImgList(new ArrayList<>());
         for (ProductImg image : product.getImgList()) {

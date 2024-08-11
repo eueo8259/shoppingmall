@@ -37,7 +37,25 @@
         height:13px;
     }
     .table th, td {
-         height: 40px;
+        vertical-align: middle;
+        height: 20px;
+    }
+    .page-link {
+      color: #000;
+      background-color: #fff;
+      border: 1px solid #ccc;
+    }
+    .page-item.active .page-link {
+     z-index: 1;
+     color: #555;
+     font-weight:bold;
+     background-color: #f1f1f1;
+     border-color: #ccc;
+    }
+    .page-link:focus, .page-link:hover {
+      color: #000;
+      background-color: #fafafa;
+      border-color: #ccc;
     }
 </style>
 <body>
@@ -54,9 +72,6 @@
     <table class="table" >
         <thead class="table-light">
         <tr style="text-align: center; height: 50px; margin: auto;">
-            <th class="checkBox">
-                <input type="checkbox" id="selectAllCheckbox" onclick="allSelected()">
-            </th>
             <th>순번</th>
             <th>일시</th>
             <th>충전포인트</th>
@@ -65,11 +80,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="userPointDto, iterstat : ${userPointDto}" style="text-align: center; height: 50px; margin: auto;">
-            <td class="checkBox">
-                <input type="checkbox" th:value="${userPointDto.pointId}" name="selectedIds">
-            </td>
-            <td th:text="${iterstat.index+1}"></td>
+        <tr th:each="userPointDto, iterstat : ${userPointDto.content}" style="text-align: center; height: 50px; margin: auto;">
+            <td th:text="${(pageSize * pageNumber) + (iterstat.index + 1)}"></td>
             <td th:text="${#temporals.format(userPointDto.occurDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
             <td th:text="${#numbers.formatInteger(userPointDto.chargePoint, 1, 'COMMA')}"></td>
             <td th:text="${#numbers.formatInteger(userPointDto.usePoint, 1, 'COMMA')}"></td>
@@ -80,12 +92,25 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-
+            <td th:text="${'잔여포인트 : ' + #numbers.formatInteger(userCurrentPoint, 1, 'COMMA')}" style="font-weight: bold; text-align: center;"></td>
         </tr>
         </tbody>
     </table>
+    <div aria-label="Page navigation" th:if="${userPointDto.hasContent()}">
+        <ul class="pagination justify-content-end">
+            <li class="page-item" th:classappend="${userPointDto.hasPrevious() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/point/list(page=${userPointDto.number - 1})}">Previous</a>
+            </li>
+            <th:block th:each="pageNumber : ${#numbers.sequence(0, userPointDto.totalPages - 1)}">
+                <li class="page-item" th:classappend="${userPointDto.number == pageNumber ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/point/list(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+            </th:block>
+            <li class="page-item" th:classappend="${userPointDto.hasNext() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/point/list(page=${userPointDto.number + 1})}">Next</a>
+            </li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

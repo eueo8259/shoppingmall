@@ -7,6 +7,9 @@ import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,23 +86,23 @@ public class OrderService {
         log.info(couponCode.toString());
     }
 
-    public List<OrderDto> findOrders(Principal principal) {
+    public Page<OrderDto> findOrders(Principal principal, Pageable pageable) {
         UserInfo userInfo = userInfoRepository.findByUserId(principal.getName());
-        List<OrderDto> ordersDto = orderRepository.findByUserInfo_userInfoCode(userInfo.getUserInfoCode())
-                .stream().map(OrderDto::fromOrdersEntity).toList();
-        List<OrderDto> orderList = new ArrayList<>();
-        for (OrderDto orderDto : ordersDto){
+        Page<Orders> orders = orderRepository.findByUserInfo_userInfoCode(userInfo.getUserInfoCode(), pageable);
+        List<OrderDto> orderDtos = orders.stream()
+                .map(OrderDto::fromOrdersEntity)
+                .toList();
+        for (OrderDto orderDto : orderDtos){
             Long orderCode = orderDto.getOrderCode();
             List<OrderDetailDto> orderDetailList = orderDetailRepository.findByOrders_orderCode(orderCode)
                     .stream().map(OrderDetailDto::fromOrderDetailEntity).toList();
             orderDto.setOrderDetailList(orderDetailList);
-            orderList.add(orderDto);
         }
-        log.info(orderList.toString());
+        Page<OrderDto> orderList = new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
         return orderList;
     }
 
-    public List<OrderDetailDto> findOrderDetail(List<OrderDto> orderList) {
+    public List<OrderDetailDto> findOrderDetail(Page<OrderDto> orderList) {
         List<OrderDetailDto> orderDetailList = new ArrayList<>();
         for(OrderDto orderDto : orderList) {
             Long orderCode = orderDto.getOrderCode();

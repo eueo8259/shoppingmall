@@ -153,14 +153,28 @@ $(document).ready(function() {
     });
 
     $("#applySeller").on("change", function() {
-        if ($(this).prop("checked")) {
-            confirm("'SELLER'는 요청 후 관리자의 승인이 필요합니다.");
+        if ($(this).prop('checked')) {
+            if (confirm("'SELLER'는 요청 후 관리자의 승인이 필요합니다.")) {
+                $('#applySellerHidden').val('apply');
+            } else {
+                $(this).prop('checked', false);
+                $('#applySellerHidden').val('none');
+            }
+        } else {
+            $('#applySellerHidden').val('none');
         }
     });
 
     $("#applyCancel").on("change", function() {
         if ($(this).prop("checked")) {
-            confirm("'SELLER' 승인 요청을 취소합니다.");
+            if (confirm("'SELLER' 요청을 취소합니다.")) {
+                $('#applySellerHidden').val('cancel');
+            } else {
+                $(this).prop('checked', false);
+                $('#applySellerHidden').val('none');
+            }
+        } else {
+            $('#applySellerHidden').val('none');
         }
     });
 

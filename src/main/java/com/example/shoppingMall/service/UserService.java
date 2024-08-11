@@ -6,11 +6,16 @@ import com.example.shoppingMall.dto.UserDto;
 import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.entity.Users;
+import com.example.shoppingMall.repository.OrderRepository;
 import com.example.shoppingMall.repository.UserInfoRepository;
 import com.example.shoppingMall.repository.UserRepository;
+import com.example.shoppingMall.repository.specification.UserSpecification;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,6 +39,9 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
     EntityManager em;
 
     public void userInfoInsert(UserInfoDto userInfoDto) {
@@ -42,10 +51,6 @@ public class UserService {
         String month = RRN.substring(2, 4);
         String day = RRN.substring(4, 6);
         String rrn = RRN.substring(7, 8);
-        log.info(year.toString());
-        log.info(month.toString());
-        log.info(day.toString());
-        log.info(rrn.toString());
 
         String birth = null;
         if(rrn.equals("1") || rrn.equals("2") || rrn.equals("5") || rrn.equals("6")) {
@@ -53,16 +58,11 @@ public class UserService {
         } else {
             birth = "20"+ year + "-" + month + "-" + day;
         }
-        log.info(birth.toString());
-        LocalDate birthDate = LocalDate.parse(birth, formatter);
-        log.info(birthDate.toString());
-        userInfoDto.setBirthDate(birthDate);
+        userInfoDto.setBirthDate(birth);
         LocalDate now = LocalDate.now();
         userInfoDto.setCreatedDate(now);
         userInfoDto.setGrade("일반");
         userInfoDto.setIsActive("Y");
-        log.info(now.toString());
-        log.info(userInfoDto.toString());
         UserInfo userInfo = UserInfoDto.toUserInfoEntity(userInfoDto);
         userInfoRepository.save(userInfo);
     }
@@ -114,10 +114,9 @@ public class UserService {
         return "OK";
     }
 
-    public List<UserInfoDto> userListAll() {
-        return userInfoRepository.findAll().stream().map(UserInfoDto::fromUserInfoEntity)
-                .filter(userInfoDto -> userInfoDto.getUser().getUserRole() != UserRole.ADMIN)
-                .collect(Collectors.toList());
+    public Page<UserInfoDto> userListAll(Pageable pageable) {
+        return userInfoRepository.findAll(pageable).map(UserInfoDto::fromUserInfoEntity);
+
     }
 
     public String findUserRole(String username) {
@@ -177,10 +176,50 @@ public class UserService {
         } else if (applySeller.equals("cancel")){
             userInfo.getUser().setUserRole(UserRole.valueOf("USER"));
         }
-        if(password != null) {
+        if(!password.isEmpty()) {
             userInfo.getUser().setPassword(passwordEncoder.encode(password));
         }
         userRepository.save(userInfo.getUser());
         userInfoRepository.save(userInfo);
+    }
+
+    public List<UserInfoDto> applyUserList() {
+        return userInfoRepository.findAll().stream().map(UserInfoDto::fromUserInfoEntity)
+                .filter(userInfoDto -> userInfoDto.getUser().getUserRole() == UserRole.TEMP).collect(Collectors.toList());
+    }
+
+    public List<UserInfoDto> filterUserInfo(String grade, String userRole, String isActive, String keyword){
+        Specification<UserInfo> spec = Specification.where(null);
+        if (grade != null && !grade.isEmpty()) {
+            spec = spec.and(UserSpecification.hasGrade(grade));
+        }
+        if (userRole != null && !userRole.isEmpty()) {
+            spec = spec.and(UserSpecification.hasUserRole(userRole));
+        }
+        if (isActive != null && !isActive.isEmpty()) {
+            spec = spec.and(UserSpecification.hasIsActive(isActive));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and(UserSpecification.hasSearchKeyword(keyword));
+        }
+        return userInfoRepository.findAll(spec).stream().map(UserInfoDto::fromUserInfoEntity).toList();
+
+    }
+
+    public void updateGrade() {
+        List<Map<String, Object>> results = orderRepository.findAmountsByUser();
+        log.info(results.toString());
+        for(Map<String, Object> result : results) {
+            Long userCode = ((Number) result.get("userCode")).longValue();
+            int sumAmount = ((Number) result.get("sumAmount")).intValue();
+            System.out.println(userCode);
+            System.out.println(sumAmount);
+            if(sumAmount > 200000) {
+                UserInfo userInfo = userInfoRepository.findById(userCode).orElse(null);
+                userInfo.setGrade("VIP");
+                log.info(userInfo.toString());
+                userInfoRepository.save(userInfo);
+            }
+        }
     }
 }

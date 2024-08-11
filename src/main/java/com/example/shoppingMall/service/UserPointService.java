@@ -9,10 +9,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserPointService {
@@ -22,10 +25,10 @@ public class UserPointService {
     @Autowired
     UserInfoRepository userInfoRepository;
 
-    public List<UserPointDto> findById(String userId) {
+    public Page<UserPointDto> findById(String userId, Pageable pageable) {
         UserInfo findUser = userInfoRepository.findByUserId(userId);
-        List<UserPointDto> userPointDto = userPointRepository.findByUserInfo_userInfoCode(findUser.getUserInfoCode())
-                .stream().map(x -> UserPointDto.fromUserPointEntity(x)).toList();
+        Page<UserPointDto> userPointDto = userPointRepository.findByUserInfo_userInfoCode(findUser.getUserInfoCode(), pageable)
+                .map(UserPointDto::fromUserPointEntity);
         return userPointDto;
     }
     @Transactional

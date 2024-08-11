@@ -86,6 +86,16 @@ public class CartService {
             cart = cartRepository.findById(item).orElse(null);
             cartList.add(cart);
         }
+        for (Cart c : cartList){
+            Product product = c.getProduct();
+
+            BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
+                    .multiply(product.getProductPrice());
+            BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
+
+            product.setProductPrice(roundedPrice);
+            c.setProduct(product);
+        }
         return cartList;
     }
 

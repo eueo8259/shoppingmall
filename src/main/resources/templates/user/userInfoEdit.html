@@ -16,7 +16,7 @@
         width: 200px;
     }
     .container {
-        width: 25%;
+        width: 30%;
     }
     .header-title {
         font-weight: bold;
@@ -131,17 +131,18 @@
                 </tbody>
             </table>
             <div th:if="${userRole == 'ROLE_USER'}" class="text-end">
-                <input type="checkbox" name="applySeller" value="apply" id="applySeller">
+                <input type="checkbox" value="apply" id="applySeller">
                 <label class="form-check-label" for="applySeller">
                     SELLER 승인 요청
                 </label>
             </div>
             <div th:if="${userRole == 'ROLE_TEMP'}" class="text-end">
-                <input type="checkbox" name="applySeller" value="cancel" id="applyCancel">
+                <input type="checkbox" value="cancel" id="applyCancel">
                 <label class="form-check-label" for="applySeller">
                     SELLER 승인 요청 취소
                 </label>
             </div>
+            <input type="hidden" id="applySellerHidden" name="applySeller" value="none">
         </form>
         <div class="button-group">
             <button type="button" class="btn btn-outline-success me-2 btn-sm" style="width: 18%;" id="save">저장</button>
