@@ -216,17 +216,13 @@
                     </form>
                 </div>
             </div>
-            <div class="total-price">
-                <p>총 가격: <span>0</span>원</p>
+            <div th:if="${#lists.isEmpty(cart)}">
+                <p class="empty-cart-message">장바구니가 비어 있습니다.</p>
             </div>
         </div>
-        <div th:if="${#lists.isEmpty(cart)}">
-            <p class="empty-cart-message">장바구니가 비어 있습니다.</p>
+        <div class="text-center">
+            <a class="btn btn-outline-success" th:href="@{/}">주문 및 결제</a>
         </div>
     </div>
-    <div class="text-center">
-        <a class="btn btn-outline-success" th:href="@{/}">주문 및 결제</a>
-    </div>
-</div>
 </body>
 </html>

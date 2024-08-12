@@ -120,13 +120,13 @@ public class OrderController {
     @PostMapping("/return")
     public String productReturn(@RequestParam("orderNum") Long orderNum){
         orderService.productStatusChange(orderNum, "반품요청");
-
+        //반품
         return "redirect:/order/list";
     }
     @PostMapping("/purchase")
     public String productPurchase(@RequestParam("orderNum") Long orderNum){
         orderService.productStatusChange(orderNum, "구매");
-
+        //구매
         return "redirect:/order/list";
     }
 
