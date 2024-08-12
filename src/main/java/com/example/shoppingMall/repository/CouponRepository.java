@@ -20,3 +20,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     Coupon findByCouponId(@Param("couponCode") Long couponCode);
 
     List<Coupon> findByCategory_categoryCode(@RequestParam("category") String category);
+
+}
