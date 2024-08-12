@@ -169,6 +169,8 @@ $(document).ready(function() {
                             var formattedPoint = Number(data.currentPoint).toLocaleString();
                             var openerDocument = window.opener.document;
                             var pointElement = openerDocument.getElementById("currentPoint");
+                            pointElement.textContent = formattedPoint;
+                            alert("충전이 완료되었습니다.");
                             window.close();
                         }
                     },

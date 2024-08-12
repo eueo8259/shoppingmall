@@ -65,7 +65,7 @@ public class OrderController {
         if(principal != null) {
             Long userInfoCode = userService.findByUserId(principal.getName()).getUserInfoCode();
             log.info(productCode.toString());
-            String category = productService.findProductOne(productCode).getCategoryCode();
+            String category = productService.findProductOne(productCode).getCategoryCode().getCategoryCode();
             log.info(category.toString());
             UserInfoDto userInfoDto = userService.findUserInfo(userInfoCode);
             List<DeliveryDto> deliveryDto = deliveryService.deliveryList(userInfoCode);
