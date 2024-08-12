@@ -222,4 +222,15 @@ public class UserService {
             }
         }
     }
+
+    public void deleteUser(Long userInfoCode) {
+        UserInfo findUser = userInfoRepository.findById(userInfoCode).orElse(null);
+        if(findUser != null) {
+            String deleteId = findUser.getUser().getId();
+            findUser.setUser(null);
+            userRepository.deleteById(deleteId);
+            findUser.setIsActive("N");
+            userInfoRepository.save(findUser);
+        }
+    }
 }

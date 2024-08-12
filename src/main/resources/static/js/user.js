@@ -200,4 +200,22 @@ $(document).ready(function() {
         $("#userModifyForm").submit();
         return true;
     });
+
+    $("#deleteUser").click(function() {
+        const userInfoCode = $("#userInfoCode").val();
+        $.ajax({
+            url: '/user/deleteUser',
+            type: 'POST',
+            data: { userInfoCode: userInfoCode },
+            success: function(response) {
+                if(response === "ok") {
+                    alert("회원 탈퇴가 완료되었습니다.");
+                    window.location.href = '/logout';
+                }
+            },
+            error: function() {
+                alert("페이지 구동에 오류가 발생했습니다.");
+            }
+        });
+    });
 });

@@ -126,4 +126,11 @@ public class UserController {
 
         return "redirect:/";
     }
+
+    @PostMapping("/user/deleteUser")
+    @ResponseBody
+    public String deleteUser(@RequestParam("userInfoCode") Long userInfoCode){
+        userService.deleteUser(userInfoCode);
+        return "ok";
+    }
 }
