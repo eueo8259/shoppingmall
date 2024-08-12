@@ -1,14 +1,16 @@
 package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class BulletinBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

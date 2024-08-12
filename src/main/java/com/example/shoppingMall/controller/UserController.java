@@ -6,15 +6,16 @@ import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/user")
 @Slf4j
 public class UserController {
     @Autowired
@@ -28,13 +29,10 @@ public class UserController {
     }
 
     @PostMapping("/signUp")
-    public String userInfoInsert(@ModelAttribute("userInfoDto") UserInfoDto userInfoDto) {
+    public String userInfoInsert(@ModelAttribute("userInfoDto") UserInfoDto userInfoDto,
+                                 @RequestParam("role") String role) {
         log.info(userInfoDto.toString());
-        UserDto userDto = new UserDto();
-        userDto.setId(userInfoDto.getUser().getId());
-        userDto.setPassword(userInfoDto.getUser().getPassword());
-        userDto.setUserRole(UserRole.USER);
-        userService.userInsert(userDto);
+        userService.userInsert(userInfoDto, role);
         userService.userInfoInsert(userInfoDto);
         return "redirect:/";
     }
@@ -54,7 +52,7 @@ public class UserController {
         return "user/login";
     }
 
-    @PostMapping("/findId")
+    @PostMapping("/user/findId")
     @ResponseBody
     public Map<String, String> findId(@RequestParam("userName") String userName,
                                        @RequestParam("RRN") String rrn,
@@ -70,7 +68,7 @@ public class UserController {
         return data;
     }
 
-    @PostMapping("/findPw")
+    @PostMapping("/user/findPw")
     @ResponseBody
     public Map<String, String> findPw(@RequestParam("id") String id,
                                       @RequestParam("phoneNumber") String phoneNumber,
@@ -86,8 +84,7 @@ public class UserController {
         return data;
     }
 
-    @PostMapping("/updatePw")
-    @ResponseBody
+    @PostMapping("/user/updatePw")
     public Map<String, String> updatePw(@RequestParam("id") String id,
                                         @RequestParam("updatePw") String updatePw) {
         String save = userService.updatePw(id, updatePw);
@@ -96,4 +93,37 @@ public class UserController {
         return response;
     }
 
+    @GetMapping("/user/userInfoModify")
+    public String userInfoModifyForm(Model model, Principal principal) {
+        if (principal != null) {
+            UserInfoDto userInfoDto = userService.findUserInfo(principal.getName());
+            model.addAttribute(userInfoDto);
+            return "user/userInfoEdit";
+        } else {
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("/user/checkPassword")
+    @ResponseBody
+    public String checkPassword(@RequestParam("userId") String userId,
+                                @RequestParam("password") String password){
+        Boolean passwordCheck = userService.passwordCheck(userId, password);
+        if(passwordCheck){
+            return "ok";
+        } else {
+            return "error";
+        }
+    }
+    @PostMapping("/user/userInfoModify")
+    public String userInfoModify(@ModelAttribute("userInfoDto") UserInfoDto userInfoDto,
+                                 @RequestParam("applySeller") String applySeller,
+                                 @RequestParam("password") String password){
+        log.info(userInfoDto.toString());
+        log.info(applySeller);
+        log.info(password);
+        userService.userInfoModify(userInfoDto, applySeller, password);
+
+        return "redirect:/";
+    }
 }

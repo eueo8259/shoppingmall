@@ -2,6 +2,7 @@ package com.example.shoppingMall.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -28,7 +30,7 @@ public class SecurityConfig {
                 )
 
                 .formLogin((form)->form
-                        .loginPage("/user/login") // 로그인 페이지 URL
+                        .loginPage("/login") // 로그인 페이지 URL
                         .loginProcessingUrl("/login") // 로그인 처리 URL
                         .defaultSuccessUrl("/", true)
                         .permitAll()
@@ -44,4 +46,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
 }

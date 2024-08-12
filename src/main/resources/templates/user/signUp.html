@@ -51,6 +51,14 @@
         font-size: 15px;
         color: #787878;
     }
+    input[type="radio"] {
+        accent-color: #828282;
+        text-align: left;
+        width:13px;
+        height:13px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 </style>
 <body>
     <div class="container">
@@ -61,8 +69,18 @@
         </div>
         <hr>
         <p class="header-title">회원가입</p>
-        <form th:action="@{/user/signUp}" method="post" th:object="${userInfoDto}" id="frm">
-            <div class="input-group mb-3">
+        <form th:action="@{/signUp}" method="post" th:object="${userInfoDto}" id="signupForm">
+            <div class="text-end">
+                <input type="radio" name="role" id="role_user" value="user" checked>
+                <label for="role_user">
+                    USER
+                </label>
+                <input type="radio" name="role" value="seller" id="role_seller">
+                <label for="role_seller">
+                    SELLER
+                </label>
+            </div>
+            <div class="input-group mb-3" style="margin-top: 10px;">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                 <input type="text" class="form-control" placeholder="아이디" id="id" name="id" th:field="*{user.id}" aria-label="Username" aria-describedby="basic-addon2">
                 <input type="button" class="btn btn-outline-secondary btn-sm" id="idCheck" value="중복확인" style="margin-right: -40;">
@@ -75,8 +93,8 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                 <input type="password" class="form-control" placeholder="비밀번호 확인" id="password2" name="password2" aria-label="password2" aria-describedby="basic-addon1">
-                <span id="passwordError" class="error" style="font-size: 12px; text-align: center; color: red; margin: auto;"></span>
             </div>
+            <p id="passwordError" class="error" style="font-size: 12px; margin-left: 5%;"></p>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                 <input type="text" class="form-control" placeholder="이름" id="userName" name="userName" th:field="*{userName}" aria-label="Username" aria-describedby="basic-addon1">

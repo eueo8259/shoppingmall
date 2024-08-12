@@ -10,7 +10,7 @@ $(document).ready(function() {
         } else if(!RRNCheck.test(RRN)) {
             alert("주민등록번호를 확인해주세요")
         } else if (!phoneCheck.test(phoneNumber)) {
-            alert("전화번호를 확인해주세요")
+            alert("휴대폰번호를 확인해주세요")
         } else {
             $.ajax({
                 url: '/user/findId',
@@ -43,7 +43,7 @@ $(document).ready(function() {
          if (id.length === 0) {
              alert("아이디가 입력되지 않았습니다.");
          } else if(!phoneCheck.test(phoneNumber)) {
-             alert("전화번호를 확인해주세요")
+             alert("휴대폰번호를 확인해주세요")
          } else if (!emailCheck.test(email)) {
              alert("이메일을 확인해주세요")
          } else {

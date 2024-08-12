@@ -34,9 +34,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" style="color: black;">카테고리</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">식품</a></li>
-                        <li><a class="dropdown-item" href="#">전자제품</a></li>
-                        <li><a class="dropdown-item" href="#">가전제품</a></li>
+                        <li th:each="category : ${categoryList}">
+                            <a class="dropdown-item" th:href="@{/product/list(categoryName=${category.categoryName})}" th:text="${category.categoryName}"></a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -53,7 +53,7 @@
             </ul>
 
             <div class="text-end">
-                <span sec:authorize="isAuthenticated()" style="font-size: 17px; font-weight: bold;" th:text="${username + '님　'}"></span>
+                <span sec:authorize="isAuthenticated()" style="font-size: 17px; font-weight: bold; margin-right: 12px;" th:text="${username + '님 '}"></span>
                 <a role="button" id="profile" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="isAuthenticated()"
                    th:href="@{/cart}">&nbsp;<i class="bi bi-cart" style="font-size: 15px;  font-weight: bold;"></i>&nbsp; </a>
@@ -62,13 +62,13 @@
                 </button>
                 <a role="button" id="login" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{/user/login}">로그인</a>
+                   th:href="@{/login}">로그인</a>
 
                 <a role="button" id="signUp" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="!isAuthenticated()"
-                   th:href="@{/user/signUp}">회원가입</a>
+                   th:href="@{/signUp}">회원가입</a>
 
-                <a role="button" id="loginout" class="btn btn-outline-secondary me-2 btn-sm"
+                <a role="button" id="logout" class="btn btn-outline-secondary me-2 btn-sm"
                    sec:authorize="isAuthenticated()"
                    th:href="@{/logout}">로그아웃</a>
             </div>
@@ -89,32 +89,22 @@
                             <a class="nav-link" th:href="@{/wish}">위시리스트</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">주문내역</a>
+                            <a class="nav-link" th:href="@{/order/list}">주문내역</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">배송지관리</a>
+                            <a class="nav-link" th:href="@{/delivery/list}">배송지관리</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">쿠폰내역</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">포인트관리</a>
+                            <a class="nav-link" th:href="@{/point/list}">포인트관리</a>
+                        </li>
+                        <li class="nav-item" th:if="${userRole == 'ROLE_ADMIN'}">
+                            <a class="nav-link" th:href="@{/manage/userMng}">고객관리</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{manage/userMng}">고객관리</a>
-                        </li>
-<!--                        <li class="nav-item dropdown">-->
-<!--                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                                Dropdown-->
-<!--                            </a>-->
-<!--                        <ul class="dropdown-menu">-->
-<!--                            <li><a class="dropdown-item" href="#">식품</a></li>-->
-<!--                            <li><a class="dropdown-item" href="#">전자제품</a></li>-->
-<!--                            <li><a class="dropdown-item" href="#">가전제품</a></li>-->
-<!--                        </ul>-->
-<!--                        </li>-->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">마이페이지</a>
+                            <a class="nav-link" th:href="@{/user/userInfoModify}">내정보수정</a>
                         </li>
                     </ul>
 <!--                    <form class="d-flex mt-3" role="search">-->
