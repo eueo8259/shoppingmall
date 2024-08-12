@@ -22,12 +22,12 @@ public class ProductDto {
     private BigDecimal originalPrice; //환율 적용 전 currency 통화일 때의 가격
     private String currency;
     private LocalDateTime productRegisterDate;
-    private Long userInfoCode;
-    private String categoryCode;
-    private String categoryName;
+    private Long userInfoCode; //사실 UserInfo의 userInfo 이런식으로 받아서 이 userInfo안에서 또 값을 꺼내왔어야 하는데 Dto설계를 첨에 잘못했다
+    private Category categoryCode;
     private String productStatus;
     private String mainImg;
     private List<String> imgList = new ArrayList<>();
     private String description;
     private double productRate; //평점
+    private int SalesStatus; //판매현황
 }

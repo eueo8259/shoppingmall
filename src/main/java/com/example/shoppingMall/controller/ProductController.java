@@ -2,12 +2,12 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.CategoryDto;
 import com.example.shoppingMall.dto.ProductDto;
-import com.example.shoppingMall.dto.UserInfoDto;
-import com.example.shoppingMall.entity.Category;
-import com.example.shoppingMall.service.CategoryService;
-import com.example.shoppingMall.service.ExchangeService;
-import com.example.shoppingMall.service.ProductService;
-import com.example.shoppingMall.service.UserService;
+import com.example.shoppingMall.dto.ReviewDto;
+import com.example.shoppingMall.service.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,32 +23,39 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final ReviewService reviewService;
 
-    public ProductController(ExchangeService exchangeService, ProductService productService, CategoryService categoryService, UserService userService) {
+    public ProductController(ExchangeService exchangeService, ProductService productService, CategoryService categoryService, UserService userService, ReviewService reviewService) {
         this.exchangeService = exchangeService;
         this.productService = productService;
         this.categoryService = categoryService;
         this.userService = userService;
-    }
-
-    @GetMapping("test")
-    public String test(Model model){
-        List<Category> categoryList = productService.categoryList();
-        model.addAttribute("categoryList", categoryList);
-        return "product/test";
+        this.reviewService = reviewService;
     }
 
     @GetMapping("product/list")
-    public String productCategoryPage(@RequestParam("categoryName") String categoryName, Model model){
-        List<ProductDto>productDtoList = productService.printProduct(categoryName);
-        model.addAttribute("productDtoList", productDtoList);
-        return "product/list_page";
+    public String productCategoryPage(@RequestParam("categoryCode") String categoryCode,
+                                      @PageableDefault(page = 0, size = 6, sort = "product_code",
+                                     direction = Sort.Direction.DESC) Pageable pageable,
+                                      Model model){
+        Page<ProductDto> productPage = productService.getCategoryProductList(pageable,categoryCode);
+        int totalPage = productPage.getTotalPages();
+        List<Integer> barNumbers = productService.getPaginationBarNumbers(
+                pageable.getPageNumber(), totalPage);
+        model.addAttribute("categoryCode", categoryCode);
+        model.addAttribute("pagination", barNumbers);
+        model.addAttribute("paging", productPage);
+
+        return "product/listPage";
     }
+
 
     @GetMapping("product/detail/{productCode}")
     public String productDetail(@PathVariable("productCode") Long productCode, Model model){
         ProductDto productDto = productService.findProductOne(productCode);
+        List<ReviewDto> reviewDto = reviewService.findProductReview(productCode);
         model.addAttribute("productDto", productDto);
+        model.addAttribute("reviewDto", reviewDto);
         return "product/detail";
     }
 

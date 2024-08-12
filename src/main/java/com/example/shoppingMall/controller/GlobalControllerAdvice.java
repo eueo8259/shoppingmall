@@ -1,6 +1,7 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.constant.UserRole;
+import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.entity.Users;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
@@ -39,9 +41,9 @@ public class GlobalControllerAdvice {
             model.addAttribute("userCurrentPoint", userCurrentPoint);
             log.info(userRole.toString());
         }
-        List<Category> categoryList = productService.categoryList();
-        model.addAttribute("categoryList", categoryList);
 
+            List<Category> categoryList = productService.categoryList();
+            model.addAttribute("categoryList", categoryList);
 
     }
 }

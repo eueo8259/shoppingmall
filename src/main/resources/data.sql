@@ -1,3 +1,4 @@
+-- user 암호 1111
 INSERT INTO category (category_code, category_name)
 VALUES
 ('1', '전자제품'),
@@ -28,7 +29,6 @@ VALUES
 ('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
 ('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
 
--- user 암호 1111
 INSERT INTO users (id, password, user_role) VALUES
 ('admin', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'ADMIN'),
 ('user1', '$2a$10$gmwpP9rsFw25ilwcam.4s.eVil26pFMDZkbUlcAGcaxVW/CqNd2cS', 'USER'),
@@ -40,7 +40,7 @@ INSERT INTO user_info (user_info_code, user_name ,RRN, phone_number, created_dat
 VALUES
 ('1', '가' ,'990708-0000000','010-1111-1111','2024-07-11', 'a@zzzz.com','1999-07-08','일반','admin', 0, 'Y'),
 ('2', '다' ,'990728-2222222','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-07-28','일반','seller', 0, 'Y'),
-('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1', 95400, 'Y'),
+('3', '나' ,'990718-1111111','010-1111-2222','2024-07-12', 'b@zzzz.com','1999-07-18','일반','user1', 5200, 'Y'),
 ('4', '다' ,'990628-2222221','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-06-28','VIP','user2', 0, 'Y'),
 ('5', '다' ,'990528-2222223','010-1111-3333','2024-07-13', 'c@zzzz.com','1999-05-28','VIP','user3', 0, 'Y');
 
@@ -143,6 +143,3 @@ VALUES
 (4, 3, 1),
 (5, 3, 2),
 (6, 3, 3);
-
-
-

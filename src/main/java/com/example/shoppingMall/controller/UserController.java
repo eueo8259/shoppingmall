@@ -1,8 +1,10 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.constant.UserRole;
+import com.example.shoppingMall.dto.ReviewDto;
 import com.example.shoppingMall.dto.UserDto;
 import com.example.shoppingMall.dto.UserInfoDto;
+import com.example.shoppingMall.service.ReviewService;
 import com.example.shoppingMall.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    ReviewService reviewService;
 
     @GetMapping("/signUp")
     public String signUpForm(Model model) {
@@ -124,6 +128,22 @@ public class UserController {
         log.info(password);
         userService.userInfoModify(userInfoDto, applySeller, password);
 
+        return "redirect:/";
+    }
+
+    @GetMapping("/review")
+    public String reviewPage(@RequestParam("productCode") Long productCode,
+                             Model model){
+        UserInfoDto userInfoDto = userService.loginUserInfoDto();
+
+        ReviewDto reviewDto = reviewService.getReviewBowl(productCode, userInfoDto.getUserInfoCode());
+        model.addAttribute("reviewDto", reviewDto);
+        return "user/review";
+    }
+
+    @PostMapping("review")
+    public String productReview(@ModelAttribute("reviewDto") ReviewDto reviewDto){
+        reviewService.insertReview(reviewDto);
         return "redirect:/";
     }
 

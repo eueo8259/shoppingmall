@@ -75,6 +75,8 @@
             <th>주문상태</th>
             <th>반품</th>
             <th>리뷰</th>
+            <th>주문확정</th>
+
         </tr>
         </thead>
         <tbody>
@@ -91,12 +93,40 @@
                 <td th:text="${detailStat.index == totalSize-1 ? order.delivery.address: ''}" class="orderCenter"></td>
                 <td th:text="${detail.orderStatus}"></td>
                 <td>
-                    <button class="btn btn-outline-dark btn-sm btnGroup">반품</button>
+<!--                    <div th:if="${detail.orderStatus == '배송완료'}">-->
+<!--                        <input type="button" value="반품"-->
+<!--                               th:data-product-code="${detail.product.productCode}"-->
+<!--                               th:data-order-code="${order.orderCode}"-->
+<!--                               onclick="handleReturn(this)">-->
+<!--                    </div>-->
+                    <form th:action="@{/order/return}" method="post">
+                        <input type="submit" th:if="${detail.orderStatus == '배송완료'}"
+                               class="btn btn-outline-primary btn-sm btnGroup review"
+                               value="반품">
+                        <input type="hidden" name="orderNum" th:value="${detail.orderNum}">
+                        <p th:if="${detail.orderStatus != '배송완료'}"></p>
+                    </form>
+
                 </td>
                 <td>
-                    <button th:if="${detail.orderStatus == '배송완료'}" class="btn btn-outline-primary btn-sm btnGroup review">리뷰</button>
-                    <p th:if="${detail.orderStatus != '배송완료'}"></p>
+                    <form th:action="@{/review}" method="get">
+                        <input type="submit" th:if="${detail.orderStatus == '배송완료' or detail.orderStatus == '구매'}"
+                               class="btn btn-outline-primary btn-sm btnGroup review"
+                               value="리뷰">
+                        <input type="hidden" name="productCode" th:value="${detail.product.productCode}">
+                        <p th:if="${detail.orderStatus != '배송완료' and detail.orderStatus != '판매'}"></p>
+                    </form>
                 </td>
+                <td>
+                    <form th:action="@{/order/purchase}" method="post">
+                        <input type="submit" th:if="${detail.orderStatus == '배송완료'}"
+                               class="btn btn-outline-primary btn-sm btnGroup review"
+                               value="확정">
+                        <input type="hidden" name="orderNum" th:value="${detail.orderNum}">
+                        <p th:if="${detail.orderStatus != '배송완료'}"></p>
+                    </form>
+                </td>
+
             </tr>
         </th:block>
         </tbody>
@@ -118,4 +148,35 @@
     </div>
 </div>
 </body>
+<script>
+    function handleReturn(button) {
+        const productCode = button.getAttribute('data-product-code');
+        const orderCode = button.getAttribute('data-order-code');
+        const url = '/order/return';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                productCode: productCode,
+                orderCode: orderCode
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('반품 요청이 완료되었습니다.');
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('반품 요청 중 오류가 발생했습니다.');
+        });
+    }
+
+</script>
+
+</script>
 </html>

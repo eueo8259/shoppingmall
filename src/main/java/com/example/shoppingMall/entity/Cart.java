@@ -2,6 +2,8 @@ package com.example.shoppingMall.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -19,6 +21,7 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "productCode")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
     private int quantity;

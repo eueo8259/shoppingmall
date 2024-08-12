@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -22,6 +25,7 @@ public class BulletinBoard {
 
     @ManyToOne
     @JoinColumn(name = "productCode")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
     @Column(length = 1000)

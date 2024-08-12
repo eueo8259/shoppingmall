@@ -114,6 +114,8 @@ public class OrderController {
             List<OrderDetailDto> orderDetailList = new ArrayList<>();
             orderDetailList = orderService.findOrderDetail(orderList);
             log.info(orderList.toString());
+            log.info("==============================================================");
+
             model.addAttribute("orderList", orderList);
             model.addAttribute("orderDetailList", orderDetailList);
             return "order/orderList";
@@ -121,4 +123,18 @@ public class OrderController {
             return "redirect:/";
         }
     }
+
+    @PostMapping("/return")
+    public String productReturn(@RequestParam("orderNum") Long orderNum){
+        orderService.productStatusChange(orderNum, "반품요청");
+
+        return "redirect:/order/list";
+    }
+    @PostMapping("/purchase")
+    public String productPurchase(@RequestParam("orderNum") Long orderNum){
+        orderService.productStatusChange(orderNum, "구매");
+
+        return "redirect:/order/list";
+    }
+
 }

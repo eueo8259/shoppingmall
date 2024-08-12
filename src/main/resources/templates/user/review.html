@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 작성</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .rating {
+            display: flex;
+            flex-direction: row-reverse; /* 순서를 뒤집어서 왼쪽에서 오른쪽으로 진행하도록 설정 */
+            align-items: center;
+            font-size: 24px;
+        }
+        .rating input[type="radio"] {
+            display: none;
+        }
+        .rating label {
+            cursor: pointer;
+            color: #ddd;
+            margin-left: 5px; /* 각 별 사이의 간격 설정 */
+        }
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating input[type="radio"]:checked ~ label {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-4">리뷰 작성</h2>
+    <form th:action="@{/review}" method="post">
+        <div class="form-group">
+            <label for="product">상품명:</label>
+            <input type="text" class="form-control" id="product" th:value="${reviewDto.product.productName}" readonly>
+            <input type="hidden" name="productCode" th:value="${reviewDto.product.productCode}">
+        </div>
+        <div class="form-group">
+            <label for="reviewTitle">제목:</label>
+            <input type="text" class="form-control" id="reviewTitle" th:field="${reviewDto.reviewTitle}" required>
+        </div>
+        <div class="form-group">
+            <label for="userInfo">작성자:</label>
+            <input type="text" class="form-control" id="userInfo" th:value="${reviewDto.userInfo.userName}" readonly>
+            <input type="hidden" name="userInfoCode" th:value="${reviewDto.userInfo.userInfoCode}">
+        </div>
+        <div class="form-group">
+            <label for="reviewContent">내용:</label>
+            <textarea class="form-control" id="reviewContent" th:field="${reviewDto.reviewText}" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>평점:</label>
+            <div class="rating">
+                <input type="radio" id="star5" name="rating" value="5" th:field="${reviewDto.rating}">
+                <label for="star5">&#9733;</label>
+                <input type="radio" id="star4" name="rating" value="4" th:field="${reviewDto.rating}">
+                <label for="star4">&#9733;</label>
+                <input type="radio" id="star3" name="rating" value="3" th:field="${reviewDto.rating}">
+                <label for="star3">&#9733;</label>
+                <input type="radio" id="star2" name="rating" value="2" th:field="${reviewDto.rating}">
+                <label for="star2">&#9733;</label>
+                <input type="radio" id="star1" name="rating" value="1" th:field="${reviewDto.rating}">
+                <label for="star1">&#9733;</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">제출</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +32,12 @@ public class CartController {
         if(principal != null) {
             String user = principal.getName();
             List<Cart> cartList = cartService.findAll(user);
+            for (Cart c : cartList){
+                System.out.println(c.getProduct().getProductPrice());
+            }
             model.addAttribute("cart", cartList);
             log.info(cartList.toString());
+
             return "cart/main";
         }
         return "cart/main";

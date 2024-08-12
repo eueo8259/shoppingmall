@@ -2,14 +2,13 @@ package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.dto.ProductDto;
-import com.example.shoppingMall.entity.Category;
-import com.example.shoppingMall.entity.Product;
-import com.example.shoppingMall.entity.ProductImg;
-import com.example.shoppingMall.entity.UserInfo;
+import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.ProductRepository;
+import com.example.shoppingMall.repositoryCustom.ProductCustomRepository;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -35,6 +34,7 @@ import java.util.stream.IntStream;
 
 @Service
 @Data
+@Slf4j
 public class ProductService {
     @Autowired
     EntityManager em;
@@ -47,10 +47,12 @@ public class ProductService {
 
 
     private final ProductRepository productRepository;
+    private final ProductCustomRepository productCustomRepository;
     private final CashedExRateProvider exRateProvider;
 
-    public ProductService(ProductRepository productRepository, CashedExRateProvider exRateProvider) {
+    public ProductService(ProductRepository productRepository, ProductCustomRepository productCustomRepository, CashedExRateProvider exRateProvider) {
         this.productRepository = productRepository;
+        this.productCustomRepository = productCustomRepository;
         this.exRateProvider = exRateProvider;
     }
 
@@ -60,7 +62,7 @@ public class ProductService {
     public void insertProduct(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
 
         Product product = new Product();
-        Category category = em.find(Category.class, productDto.getCategoryCode());
+        Category category = em.find(Category.class, productDto.getCategoryCode().getCategoryCode());
         UserInfo userInfo = em.find(UserInfo.class, productDto.getUserInfoCode());
 
         product.setProductName(productDto.getProductName());
@@ -70,6 +72,7 @@ public class ProductService {
         product.setCategory(category);
         product.setProductRegisterDate(LocalDateTime.now());
         product.setUserInfo(userInfo);
+        product.setStatus(productDto.getProductStatus());
         product.setDescription(productDto.getDescription());
         product.setImgList(new ArrayList<>());
 
@@ -238,14 +241,14 @@ public class ProductService {
         }
         return productDtoList;
     }
-    private ProductDto productDtoFromEntity(Product product) {
+    public ProductDto productDtoFromEntity(Product product) {
 
         ProductDto productDto = new ProductDto();
+        System.out.println(product.toString());
 
         BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
                 .multiply(product.getProductPrice());
         BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
-
         productDto.setProductCode(product.getProductCode());
         productDto.setProductName(product.getProductName());
         productDto.setProductPrice(roundedPrice);
@@ -253,13 +256,13 @@ public class ProductService {
         productDto.setCurrency(product.getCurrency());
         productDto.setProductRate(product.getProductRate());
         productDto.setProductQuantity(product.getProductQuantity());
-        productDto.setProductStatus(product.getStatus()); //나중에 상태값에 따라서 출력되고 출력되지않도록 쿼리문 수정
+        productDto.setUserInfoCode(product.getUserInfo().getUserInfoCode());
+        productDto.setProductStatus(product.getStatus());
         productDto.setDescription(product.getDescription());
-        productDto.setCategoryCode(product.getCategory().getCategoryCode());
-        productDto.setCategoryName(product.getCategory().getCategoryName());
+        productDto.setCategoryCode(product.getCategory());
         productDto.setImgList(new ArrayList<>());
         for (ProductImg image : product.getImgList()) {
-            if (image.getImgUrl().contains("main")) { // "main"이 포함된 이미지를 찾음
+            if (image.getImgUrl().contains("main")) {
                 productDto.setMainImg(image.getImgUrl());
                 System.out.println(productDto.getMainImg());
             }else {
@@ -286,16 +289,16 @@ public class ProductService {
 
 
 
-//    public Page<ProductDto> getProductsAwaitingApproval(Pageable pageable) {
-//        Page<Product> productPage = productRepository.getProductsAwaitingApproval(pageable);
-//
-//        List<ProductDto> productDtoList = productPage.getContent().stream()
-//                .map(this::productDtoFromEntity)
-//                .collect(Collectors.toList());
-//
-//        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
-//
-//    }
+    public Page<ProductDto> getProductsAwaitingApproval(Pageable pageable) {
+        Page<Product> productPage = productRepository.getProductsAwaitingApproval(pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+    }
 
     public Page<ProductDto> getProductAllList(Pageable pageable) {
         Page<Product> productPage = productRepository.getProductsList(pageable);
@@ -329,6 +332,39 @@ public class ProductService {
         Product product = em.find(Product.class, productCode);
         em.remove(product);
     }
+
+    public Page<ProductDto> getKeywordProductList(String type, String keyword, Pageable pageable) {
+       Page<Product> productPage = productCustomRepository.getSearchProductList(type, keyword, pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+
+    }
+
+    public Page<ProductDto> getKeywordApproveProductList(String type, String keyword, Pageable pageable) {
+        Page<Product>  productPage = productCustomRepository.getSearchApproveProductList(type, keyword, pageable);
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(this::productDtoFromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+    }
+
+    public Page<ProductDto> getCategoryProductList(Pageable pageable, String categoryCode) {
+        Page<Product> productPage = productCustomRepository.findProductListByCategory(categoryCode, pageable);
+
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(x -> productDtoFromEntity(x))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productDtoList, pageable, productPage.getTotalElements());
+
+    }
+
     public void buyProduct(Long productCode, int orderQuantity) {
         productRepository.updateQuantity(productCode, orderQuantity);
         Product product = productRepository.findById(productCode).orElse(null);
@@ -341,5 +377,31 @@ public class ProductService {
     }
     public List<Map<String, String>> getName() {
         return productRepository.findGetName();
+    }
+    @Transactional
+    public void productReturn(Long orderNum) {
+        OrderDetail orderDetail = em.find(OrderDetail.class, orderNum);
+        Product product = orderDetail.getProduct();
+        int returnQuantity = product.getProductQuantity() + 1;
+        product.setProductQuantity(returnQuantity);
+        em.merge(product);
+    }
+    @Transactional
+    public List<Object[]> findsalesStatusProduct(Long userInfoCode) {
+        String jpql = """
+            SELECT p, COUNT(o) as saleCount
+            FROM Product p
+            LEFT JOIN OrderDetail o ON p.productCode = o.product.productCode
+            WHERE o.orderStatus = '구매'
+            AND p.userInfo.userInfoCode = :userInfoCode
+            GROUP BY p.productCode
+            ORDER BY p.productCode DESC """;
+
+        TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+        query.setParameter("userInfoCode", userInfoCode);
+        List<Object[]> results = query.getResultList();
+        return results;
+
+
     }
 }
