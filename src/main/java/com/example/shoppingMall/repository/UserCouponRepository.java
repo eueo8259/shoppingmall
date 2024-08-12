@@ -11,5 +11,4 @@ import java.util.List;
 public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
     List<UserCoupon> findByUserInfo_userInfoCodeAndCoupon_couponCode(@Param("userInfoCode") Long userInfoCode,
                                                                      @Param("couponCode") Long couponCode);
-
 }
