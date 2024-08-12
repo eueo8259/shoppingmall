@@ -1,5 +1,6 @@
 package com.example.shoppingMall.service;
 
+import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.dto.OrderDetailDto;
 import com.example.shoppingMall.dto.OrderDto;
 import com.example.shoppingMall.dto.ProductDto;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public class OrderService {
     ProductService productService;
     @Autowired
     UserCouponRepository userCouponRepository;
+    @Autowired
+    CashedExRateProvider exRateProvider;
 
     public void insertOrder(OrderDto orderDto, List<Map<String, Object>> orderDetailList, Long[] cartCodeList, Long couponCode) {
         log.info(orderDto.getUserInfo().getUserInfoCode().toString());
@@ -117,6 +122,10 @@ public class OrderService {
     public OrderDetailDto newOrderDetail(Long orderItem, int quantity) {
         Product product = productService.findOrderItem(orderItem);
         OrderDetailDto orderDetailDto = new OrderDetailDto();
+        BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
+                .multiply(product.getProductPrice());
+        BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
+        product.setProductPrice(roundedPrice);
         orderDetailDto.setProduct(product);
         orderDetailDto.setOrderQuantity(quantity);
         return orderDetailDto;
