@@ -21,9 +21,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
 
     @Query(value = "SELECT ui.user_info_code AS userCode, " +
             "SUM(o.payment_price - o.discount_amount) AS sumAmount " +
-            "FROM orders o JOIN user_info ui ON o.user_info_code = ui.user_info_code " +
+            "FROM orders o " +
+            "JOIN user_info ui ON o.user_info_code = ui.user_info_code " +
+            "JOIN order_detail od ON o.order_code = od.order_code " +
             "WHERE YEAR(o.order_date) = YEAR(CURDATE()) " +
             "AND MONTH(o.order_date) = MONTH(CURDATE()) " +
+            "AND od.order_status != '반품완료' " +
             "GROUP BY ui.user_info_code", nativeQuery = true)
     List<Map<String, Object>> findAmountsByUser();
 

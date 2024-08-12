@@ -214,10 +214,13 @@ public class UserService {
             int sumAmount = ((Number) result.get("sumAmount")).intValue();
             System.out.println(userCode);
             System.out.println(sumAmount);
+            UserInfo userInfo = userInfoRepository.findById(userCode).orElse(null);
             if(sumAmount > 200000) {
-                UserInfo userInfo = userInfoRepository.findById(userCode).orElse(null);
                 userInfo.setGrade("VIP");
                 log.info(userInfo.toString());
+                userInfoRepository.save(userInfo);
+            } else {
+                userInfo.setGrade("일반");
                 userInfoRepository.save(userInfo);
             }
         }

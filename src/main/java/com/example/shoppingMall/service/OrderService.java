@@ -61,18 +61,22 @@ public class OrderService {
         orderRepository.save(orders);
 
         Long orderCode = orderRepository.findCode(orders.getUserInfo().getUserInfoCode());
-
-        OrderDetail orderDetail = new OrderDetail();
-        for(int i = 0; i < orderDetailList.size(); i++) {
-            orderDetail.setOrders(new Orders());
+        log.info(String.valueOf(orderCode));
+        for (Map<String, Object> detail : orderDetailList) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrders(orders);
             orderDetail.setProduct(new Product());
             orderDetail.getOrders().setOrderCode(orderCode);
-            orderDetail.getProduct().setProductCode(Long.valueOf(String.valueOf(orderDetailList.get(i).get("productCode"))));
-            orderDetail.setOrderQuantity(Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderQuantity"))));
-            orderDetail.setOrderPrice(Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderPrice"))));
-            productService.buyProduct(Long.valueOf(String.valueOf(orderDetailList.get(i).get("productCode"))), Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderQuantity"))));
+            orderDetail.getProduct().setProductCode(Long.valueOf(String.valueOf(detail.get("productCode"))));
+            orderDetail.setOrderQuantity(Integer.parseInt(String.valueOf(detail.get("orderQuantity"))));
+            orderDetail.setOrderPrice(Integer.parseInt(String.valueOf(detail.get("orderPrice"))));
+
+            // Log each order detail for debugging
+            log.info(orderDetail.toString());
+
+            // Save each OrderDetail object
+            orderDetailRepository.save(orderDetail);
         }
-        orderDetailRepository.save(orderDetail);
 
         UserPoint userPoint = new UserPoint();
         userPoint.setUserInfo(userInfo);

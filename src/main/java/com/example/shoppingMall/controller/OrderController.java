@@ -107,7 +107,7 @@ public class OrderController {
 
     @GetMapping("/list")
     public String orderList(Model model, Principal principal,
-                            @PageableDefault(page = 0, size = 6, sort = "orderCode",
+                            @PageableDefault(page = 0, size = 10, sort = "orderCode",
                             direction = Sort.Direction.ASC) Pageable pageable) {
         if(principal != null) {
             Page<OrderDto> orderList = orderService.findOrders(principal, pageable);
