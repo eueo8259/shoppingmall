@@ -21,4 +21,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findByCategory_categoryCode(@RequestParam("category") String category);
 
+
+    @Query(value = "SELECT coupon_code FROM coupon where category_code  = :categoryCode ORDER BY coupon_code DESC LIMIT 1", nativeQuery = true)
+    Long lastCode(@Param("categoryCode") Long categoryCode);
 }

@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .coupon-list-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .form-group.hidden {
+            display: none;
         }
     </style>
     <!-- Bootstrap and custom scripts -->
@@ -22,13 +24,57 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        function setCategoryId() {
+            const path = window.location.pathname;
+            const parts = path.split('/');
+            const categoryId = parts[parts.length - 1];
+            document.getElementById('categoryId').value = categoryId;
+        }
+
+        function handleCouponTypeChange() {
+            const couponTypeSelect = document.getElementById('boardTitle');
+            const discountRateField = document.getElementById('discountRateField');
+            const discountAmountField = document.getElementById('discountAmountField');
+
+            function updateFields() {
+                const selectedValue = couponTypeSelect.value;
+                if (selectedValue === 'discountRate') {
+                    discountRateField.classList.remove('hidden');
+                    discountAmountField.classList.add('hidden');
+                } else if (selectedValue === 'discountAmount') {
+                    discountRateField.classList.add('hidden');
+                    discountAmountField.classList.remove('hidden');
+                } else {
+                    discountRateField.classList.add('hidden');
+                    discountAmountField.classList.add('hidden');
+                }
+            }
+
+            couponTypeSelect.addEventListener('change', updateFields);
+            updateFields();
+        }
+         function formatDiscountAmount(amount) {
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+        }
+
+        function applyDiscountFormat() {
+            document.querySelectorAll('.discount-amount').forEach(function(element) {
+                var amount = parseInt(element.textContent, 10);
+                element.textContent = formatDiscountAmount(amount);
+            });
+        }
+
+        $(document).ready(function() {
+            applyDiscountFormat();
+        });
+
         function confirmReceive(button) {
-            var couponCode = $(button).closest('li').find('input[type="hidden"]').val();
+            var couponCode = $(button).closest('tr').find('input[type="hidden"]').val();
             if (confirm('정말로 이 쿠폰을 받으시겠습니까?')) {
                 $.ajax({
                     url: '/event/receive-coupon',
                     method: 'POST',
-                    data: $.param({ couponCode: couponCode }),
+                    data: { couponCode: couponCode },
                     success: function(response) {
                         alert('쿠폰을 성공적으로 받았습니다!');
                     },
@@ -38,6 +84,29 @@
                 });
             }
         }
+
+        function removeCoupon(button) {
+            var couponCode = $(button).closest('tr').find('input[type="hidden"]').val();
+            if (confirm('정말로 이 쿠폰을 삭제하시겠습니까?')) {
+                $.ajax({
+                    url: '/event/coupon/remove',
+                    method: 'POST',
+                    data: { couponCode: couponCode },
+                    success: function(response) {
+                        alert('쿠폰이 성공적으로 삭제되었습니다!');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('오류 발생: ' + xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        window.onload = function() {
+            setCategoryId();
+            handleCouponTypeChange();
+        };
     </script>
 </head>
 
@@ -49,23 +118,75 @@
                 <h4 class="card-title text-primary">
                     <i class="fas fa-ticket-alt"></i> 쿠폰 목록
                 </h4>
-                <ul class="list-group list-group-flush">
-                    <li th:each="coupon : ${coupon}" class="list-group-item coupon-list-item">
-                        <div>
-                            <strong>카테고리:</strong> <span th:text="${coupon.category.categoryName}"></span>
-                        </div>
-                        <div>
-                            <strong>할인율:</strong> <span th:text="${coupon.discountRate}"></span>
-                        </div>
-                        <div>
-                            <input type="hidden" th:value="${coupon.couponCode}">
-                            <button type="button" class="btn btn-primary"
-                                    onclick="confirmReceive(this);">
-                                받기
-                            </button>
-                        </div>
-                    </li>
-                </ul>
+                <!-- 메시지 표시 -->
+                <div th:if="${message}" class="alert alert-success">
+                    <span th:text="${message}"></span>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger">
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>카테고리</th>
+                            <th>할인율/할인금액</th>
+                            <th>쿠폰</th>
+                            <th th:if="${admin == 'admin'}">관리자</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="coupon : ${coupon}">
+                            <td th:text="${coupon.category.categoryName}"></td>
+                            <td>
+                                <div th:if="${coupon.discountAmount == 0}">
+                                    <span th:text="${coupon.discountRate * 100}"></span>%
+                                </div>
+                                <div th:unless="${coupon.discountAmount == 0}">
+                                    <span class="discount-amount" th:text="${coupon.discountAmount}"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="hidden" th:value="${coupon.couponCode}">
+                                <button type="button" class="btn btn-primary" onclick="confirmReceive(this);">
+                                    받기
+                                </button>
+                            </td>
+                            <td th:if="${admin == 'admin'}">
+                                <button type="button" class="btn btn-danger" onclick="removeCoupon(this);">
+                                    삭제
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 쿠폰 등록 폼 (관리자 전용) -->
+                <div th:if="${admin == 'admin'}" class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">쿠폰 등록</h5>
+                        <form th:action="@{/event/coupon/insert}" method="post">
+                            <input type="hidden" id="categoryId" name="categoryId">
+                            <div class="form-group">
+                                <label for="boardTitle">쿠폰 종류</label>
+                                <select class="form-select" id="boardTitle" name="boardTitle">
+                                    <option value="" disabled selected>쿠폰 종류를 선택하세요</option>
+                                    <option value="discountRate">할인율</option>
+                                    <option value="discountAmount">할인금액</option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-3 hidden" id="discountRateField">
+                                <label for="discountRate">할인율</label>
+                                <input type="number" id="discountRate" name="discountRate" value="0" class="form-control" placeholder="값을 입력하세요">
+                            </div>
+                            <div class="form-group mt-3 hidden" id="discountAmountField">
+                                <label for="discountAmount">할인금액</label>
+                                <input type="number" id="discountAmount" name="discountAmount" value="0" class="form-control" placeholder="값을 입력하세요">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">쿠폰 등록</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

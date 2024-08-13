@@ -44,7 +44,6 @@ VALUES
 ('3', '2', "/productImg/main044a3515-350a-42f5-b5c5-5ca15ec6c1ca.jpg"),
 ('4', '2', "/productImg/sub2ada9c40-c416-44e0-8223-0a0a134ecb45.jpg");
 
-
 INSERT INTO delivery (user_info_code, delivery_code ,postal_code, address, contact_number, contact_name, default_yn)
 VALUES
 ('3', '1' ,'03461','서울특별시 은평구 은평로 111', '010-1111-1111','가', 'Y'),
@@ -117,15 +116,6 @@ VALUES
 ('주문 문제', 4, '달걀 주문 내용을 변경하고 싶습니다. 어떻게 해야 하나요?', 1, 16, true);
 
 
-INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
-VALUES
-(1, 3 ,'2024-08-05 09:00:00', 100000, 0, '포인트충전'),
-(2, 3 ,'2024-08-05 09:15:00', 0, 45000, '주문번호: 4'),
-(3, 3 ,'2024-08-08 12:20:00', 200, 0, '리뷰이벤트적립금'),
-(4, 3 ,'2024-08-06 11:20:00', 200000, 0, '포인트충전'),
-(5, 3 ,'2024-08-06 11:30:00', 0, 160000, '주문번호: 5'),
-(6, 3 ,'2024-08-10 15:20:00', 200, 0, '리뷰이벤트적립금');
-
 INSERT INTO comment (comment_text, creation_date, user_info_code, board_code)
 VALUES
 ('안녕하세요. TV 제품의 해상도는 4K이며, 사운드 품질은 Dolby Audio를 지원합니다. 추가 정보가 필요하시면 말씀해 주세요.', '2024-08-02', 1, 2),
@@ -143,18 +133,28 @@ VALUES
 INSERT INTO coupon (coupon_code, category_code, discount_rate, discount_amount) VALUES
 -- 전자제품 카테고리 (category_code: '1')
 (1001, 1, 0.10, 0),
-(1002, 1, 0.13, 0),
+(1002, 1, 0, 3000),
 (1003, 1, 0.15, 0),
 
 -- 음식 카테고리 (category_code: '2')
-(2001, 2, 0.12, 0),
+(2001, 2, 0, 3000),
 (2002, 2, 0.15, 0),
 (2003, 2, 0.10, 0),
 
 -- 가전제품 카테고리 (category_code: '3')
-(3001, 3, 0.75, 0),
+(3001, 3, 0.07, 0),
 (3002, 3, 0.08, 0),
-(3003, 3, 0.10, 0);
+(3003, 3, 0, 5000);
+
+
+INSERT INTO user_point (point_id, user_info_code, occur_date, charge_point, use_point, remarks)
+VALUES
+(1, 3 ,'2024-08-05 09:00:00', 100000, 0, '포인트충전'),
+(2, 3 ,'2024-08-05 09:15:00', 0, 45000, '주문번호: 4'),
+(3, 3 ,'2024-08-08 12:20:00', 200, 0, '리뷰이벤트적립금'),
+(4, 3 ,'2024-08-06 11:20:00', 200000, 0, '포인트충전'),
+(5, 3 ,'2024-08-06 11:30:00', 0, 160000, '주문번호: 5'),
+(6, 3 ,'2024-08-10 15:20:00', 200, 0, '리뷰이벤트적립금');
 
 
 INSERT INTO user_coupon (user_coupon_code, user_info_code, coupon_code)
