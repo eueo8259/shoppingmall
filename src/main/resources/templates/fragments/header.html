@@ -80,7 +80,7 @@
                 <br>
                 <hr>
                 <br>
-                <div class="offcanvas-body">
+                <div class="offcanvas-body" th:if="${userRole == 'ROLE_USER'}">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">장바구니</a>
@@ -112,6 +112,87 @@
 <!--                        <button class="btn btn-outline-success" type="submit">Search</button>-->
 <!--                    </form>-->
                 </div>
+                <div class="offcanvas-body" th:if="${userRole == 'ROLE_SELLER'}">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{seller/insert}">상품등록</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{seller/list}">상품 관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{seller/returnList}">반품 관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{seller/delivery}">배송 관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{seller/sales}">판매 현황</a>
+                        </li>
+                        </li>
+                        <!--                        <li class="nav-item dropdown">-->
+                        <!--                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+                        <!--                                Dropdown-->
+                        <!--                            </a>-->
+                        <!--                        <ul class="dropdown-menu">-->
+                        <!--                            <li><a class="dropdown-item" href="#">식품</a></li>-->
+                        <!--                            <li><a class="dropdown-item" href="#">전자제품</a></li>-->
+                        <!--                            <li><a class="dropdown-item" href="#">가전제품</a></li>-->
+                        <!--                        </ul>-->
+                        <!--                        </li>-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">마이페이지</a>
+                        </li>
+                    </ul>
+                    <!--                    <form class="d-flex mt-3" role="search">-->
+                    <!--                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
+                    <!--                        <button class="btn btn-outline-success" type="submit">Search</button>-->
+                    <!--                    </form>-->
+                </div>
+                <div class="offcanvas-body" th:if="${userRole == 'ROLE_ADMIN'}">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">장바구니</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/wish}">위시리스트</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">주문내역</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{delivery/deliveryList}">배송지관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">쿠폰내역</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{point/pointList}">포인트관리</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{manage/userMng}">고객관리</a>
+                        </li>
+                        <!--                        <li class="nav-item dropdown">-->
+                        <!--                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+                        <!--                                Dropdown-->
+                        <!--                            </a>-->
+                        <!--                        <ul class="dropdown-menu">-->
+                        <!--                            <li><a class="dropdown-item" href="#">식품</a></li>-->
+                        <!--                            <li><a class="dropdown-item" href="#">전자제품</a></li>-->
+                        <!--                            <li><a class="dropdown-item" href="#">가전제품</a></li>-->
+                        <!--                        </ul>-->
+                        <!--                        </li>-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">마이페이지</a>
+                        </li>
+                    </ul>
+                    <!--                    <form class="d-flex mt-3" role="search">-->
+                    <!--                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
+                    <!--                        <button class="btn btn-outline-success" type="submit">Search</button>-->
+                    <!--                    </form>-->
+                </div>
+
+
             </div>
         </div>
     </nav>
