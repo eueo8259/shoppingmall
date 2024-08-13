@@ -1,7 +1,6 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.DeliveryDto;
-import com.example.shoppingMall.dto.UserPointDto;
 import com.example.shoppingMall.service.DeliveryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

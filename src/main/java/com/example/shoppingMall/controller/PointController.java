@@ -2,7 +2,6 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.dto.UserPointDto;
-import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.service.UserPointService;
 import com.example.shoppingMall.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
