@@ -1,8 +1,10 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.BulletinBoardDto;
+import com.example.shoppingMall.dto.CommentDto;
 import com.example.shoppingMall.entity.BulletinBoard;
 import com.example.shoppingMall.entity.Cart;
+import com.example.shoppingMall.entity.Comment;
 import com.example.shoppingMall.service.BoardService;
 import com.example.shoppingMall.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,6 +43,9 @@ public class BoardController {
                 pageable.getPageNumber(), totalPage);
         model.addAttribute("pagination", barNumbers);
         model.addAttribute("paging", boardPage);
+
+        List<String> boardTitle = boardService.boardTitle();
+        model.addAttribute("boardTitle", boardTitle);
         return "board/main";
     }
 
@@ -64,11 +70,37 @@ public class BoardController {
     }
 
     @GetMapping("details/{id}")
-    public String boardDT(@PathVariable("id") Long boardCode, Model model){
-        boardService.upView(boardCode);
-        BulletinBoardDto bulletinBoardDto = boardService.findOne(boardCode);
-        log.info(bulletinBoardDto.toString());
-        model.addAttribute("board", bulletinBoardDto);
-        return "board/detail";
+    public String boardDT(@PathVariable("id") Long boardCode, Model model,Principal principal){
+        if(principal != null) {
+            //조회수
+            boardService.upView(boardCode);
+            // 관리자 확인
+            String admin = principal.getName();
+            model.addAttribute("admin", admin);
+            // 문의정보
+            BulletinBoardDto bulletinBoardDto = boardService.findOne(boardCode);
+            model.addAttribute("board", bulletinBoardDto);
+            if (bulletinBoardDto.isHasComment()){
+                // 답글정보
+                Comment comment = boardService.findOneComment(boardCode);
+                model.addAttribute("comment",comment);
+                log.info(comment.toString());
+            }
+
+            return "board/detail";
+        }
+        return "user/login";
     }
+
+    @PostMapping("comment")
+    public String Comment(CommentDto comment, RedirectAttributes redirectAttributes,
+                          @RequestParam("admin") String admin){
+        // has_comment true로 변경
+        boardService.commentOK(comment.getBoardCode().getBoardCode());
+        // Comment 테이블 추가
+        boardService.AddComment(comment,admin);
+        redirectAttributes.addFlashAttribute("message", "댓글이 성공적으로 작성되었습니다.");
+        return "redirect:/board";
+    }
+
 }

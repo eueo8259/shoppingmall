@@ -153,14 +153,28 @@ $(document).ready(function() {
     });
 
     $("#applySeller").on("change", function() {
-        if ($(this).prop("checked")) {
-            confirm("'SELLER'는 요청 후 관리자의 승인이 필요합니다.");
+        if ($(this).prop('checked')) {
+            if (confirm("'SELLER'는 요청 후 관리자의 승인이 필요합니다.")) {
+                $('#applySellerHidden').val('apply');
+            } else {
+                $(this).prop('checked', false);
+                $('#applySellerHidden').val('none');
+            }
+        } else {
+            $('#applySellerHidden').val('none');
         }
     });
 
     $("#applyCancel").on("change", function() {
         if ($(this).prop("checked")) {
-            confirm("'SELLER' 승인 요청을 취소합니다.");
+            if (confirm("'SELLER' 요청을 취소합니다.")) {
+                $('#applySellerHidden').val('cancel');
+            } else {
+                $(this).prop('checked', false);
+                $('#applySellerHidden').val('none');
+            }
+        } else {
+            $('#applySellerHidden').val('none');
         }
     });
 
@@ -185,5 +199,23 @@ $(document).ready(function() {
         alert("회원 정보 수정이 완료되었습니다.");
         $("#userModifyForm").submit();
         return true;
+    });
+
+    $("#deleteUser").click(function() {
+        const userInfoCode = $("#userInfoCode").val();
+        $.ajax({
+            url: '/user/deleteUser',
+            type: 'POST',
+            data: { userInfoCode: userInfoCode },
+            success: function(response) {
+                if(response === "ok") {
+                    alert("회원 탈퇴가 완료되었습니다.");
+                    window.location.href = '/logout';
+                }
+            },
+            error: function() {
+                alert("페이지 구동에 오류가 발생했습니다.");
+            }
+        });
     });
 });

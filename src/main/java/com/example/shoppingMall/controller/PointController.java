@@ -2,18 +2,20 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.UserInfoDto;
 import com.example.shoppingMall.dto.UserPointDto;
-import com.example.shoppingMall.entity.UserInfo;
 import com.example.shoppingMall.service.UserPointService;
 import com.example.shoppingMall.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -75,11 +77,15 @@ public class PointController {
     }
 
 
-    @GetMapping("/pointList")
-    public String pointList(Model model, Principal principal) {
+    @GetMapping("/list")
+    public String pointList(Model model, Principal principal,
+                            @PageableDefault(page = 0, size = 6, sort = "pointId",
+                            direction = Sort.Direction.ASC) Pageable pageable) {
         if(principal != null) {
             String userId = principal.getName();
-            List<UserPointDto> userPointDto = userPointService.findById(userId);
+            Page<UserPointDto> userPointDto = userPointService.findById(userId, pageable);
+            model.addAttribute("pageNumber", userPointDto.getNumber());
+            model.addAttribute("pageSize", userPointDto.getSize());
             model.addAttribute("userPointDto", userPointDto);
             return "point/pointList";
         } else {

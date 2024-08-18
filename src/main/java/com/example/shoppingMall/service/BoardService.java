@@ -1,11 +1,10 @@
 package com.example.shoppingMall.service;
 
 import com.example.shoppingMall.dto.BulletinBoardDto;
-import com.example.shoppingMall.entity.BulletinBoard;
-import com.example.shoppingMall.entity.Cart;
-import com.example.shoppingMall.entity.Product;
-import com.example.shoppingMall.entity.UserInfo;
+import com.example.shoppingMall.dto.CommentDto;
+import com.example.shoppingMall.entity.*;
 import com.example.shoppingMall.repository.BulletinBoardRepository;
+import com.example.shoppingMall.repository.CommentRepository;
 import com.example.shoppingMall.repository.ProductRepository;
 import com.example.shoppingMall.repository.UserInfoRepository;
 import jakarta.transaction.Transactional;
@@ -14,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -21,6 +21,9 @@ import java.util.stream.IntStream;
 public class BoardService {
     @Autowired
     BulletinBoardRepository bulletinBoardRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     @Autowired
     ProductRepository productRepository;
@@ -42,6 +45,33 @@ public class BoardService {
         return IntStream.range(startNumber, endNumber).boxed().toList();
     }
 
+
+
+    @Transactional
+    public void upView(Long boardCode) {
+        bulletinBoardRepository.upView(boardCode);
+    }
+
+    public BulletinBoardDto findOne(Long boardCode) {
+        return bulletinBoardRepository.findById(boardCode)
+                .map(x-> BulletinBoardDto.fromBoardEntity(x))
+                .orElse(null);
+    }
+
+    public List<String> boardTitle() {
+        return bulletinBoardRepository.boardTitle();
+    }
+
+    public Comment findOneComment(Long boardCode) {
+         return commentRepository.findByComment(boardCode);
+
+    }
+
+    @Transactional
+    public void commentOK(Long boardCode) {
+        bulletinBoardRepository.commentOK(boardCode);
+    }
+
     public void insert(BulletinBoardDto bulletinBoardDto, String user) {
         UserInfo userInfo = userInfoRepository.findByUserId(user);
         Product product = productRepository.findByProductCode(bulletinBoardDto.getProductCode().getProductCode());
@@ -55,14 +85,15 @@ public class BoardService {
         bulletinBoardRepository.save(bulletinBoard);
     }
 
-    @Transactional
-    public void upView(Long boardCode) {
-        bulletinBoardRepository.upView(boardCode);
-    }
+    public void AddComment(CommentDto comment, String admin) {
+        UserInfo userInfo = userInfoRepository.findByUserId(admin);
+        BulletinBoard bulletinBoard = bulletinBoardRepository.findByBoard(comment.getBoardCode().getBoardCode());
 
-    public BulletinBoardDto findOne(Long boardCode) {
-        return bulletinBoardRepository.findById(boardCode)
-                .map(x-> BulletinBoardDto.fromBoardEntity(x))
-                .orElse(null);
+        Comment comments = new Comment();
+        comments.setCommentText(comment.getCommentText());
+        comments.setBoard(bulletinBoard);
+        comments.setUserInfo(userInfo);
+        comments.setCreationDate(LocalDate.now());
+        commentRepository.save(comments);
     }
 }

@@ -9,6 +9,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +38,6 @@ public class OrderController {
     OrderService orderService;
     @Autowired
     ProductService productService;
-
     @Autowired
     UserCouponService userCouponService;
 
@@ -45,7 +48,7 @@ public class OrderController {
         List<DeliveryDto> deliveryDto = deliveryService.deliveryList(userInfoCode);
         DeliveryDto defaultDelivery = deliveryService.defaultDelivery(userInfoCode);
         List<Cart> cartList = cartService.findCartCodes(orderItems);
-        List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode);
+        List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode, null, cartList);
         log.info(userCoupons.toString());
         model.addAttribute("userInfoDto", userInfoDto);
         model.addAttribute("deliveryDto", deliveryDto);
@@ -61,10 +64,13 @@ public class OrderController {
                               Principal principal, Model model) {
         if(principal != null) {
             Long userInfoCode = userService.findByUserId(principal.getName()).getUserInfoCode();
+            log.info(productCode.toString());
+            String category = productService.findProductOne(productCode).getCategoryCode().getCategoryCode();
+            log.info(category.toString());
             UserInfoDto userInfoDto = userService.findUserInfo(userInfoCode);
             List<DeliveryDto> deliveryDto = deliveryService.deliveryList(userInfoCode);
             DeliveryDto defaultDelivery = deliveryService.defaultDelivery(userInfoCode);
-            List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode);
+            List<UserCoupon> userCoupons = userCouponService.findCouponCodes(userInfoCode, category, null);
             OrderDetailDto orderDetailDto = orderService.newOrderDetail(productCode, quantity);
             model.addAttribute("userInfoDto", userInfoDto);
             model.addAttribute("deliveryDto", deliveryDto);
@@ -100,10 +106,11 @@ public class OrderController {
     }
 
     @GetMapping("/list")
-    public String orderList(Model model, Principal principal) {
-
+    public String orderList(Model model, Principal principal,
+                            @PageableDefault(page = 0, size = 10, sort = "orderCode",
+                            direction = Sort.Direction.ASC) Pageable pageable) {
         if(principal != null) {
-            List<OrderDto> orderList = orderService.findOrders(principal);
+            Page<OrderDto> orderList = orderService.findOrders(principal, pageable);
             List<OrderDetailDto> orderDetailList = new ArrayList<>();
             orderDetailList = orderService.findOrderDetail(orderList);
             log.info(orderList.toString());

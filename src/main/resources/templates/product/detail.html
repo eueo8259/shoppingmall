@@ -206,8 +206,11 @@
                     <input type="hidden" name="productCode" th:value="${productDto.productCode}">
                     <button type="submit">❤ 위시리스트</button>
                 </form>
-
-                <button class="button" id="buy-now">지금 구매</button>
+                <form id="orderForm" th:action="@{/order/direct}" method="get">
+                    <input type="hidden" name="productCode" th:value="${productDto.productCode}">
+                    <input type="hidden" name="quantity" id="orderQuantity">
+                    <button class="button" id="buy-now">지금 구매</button>
+                </form>
             </div>
         </div>
         <div class="additional-info">
@@ -255,9 +258,25 @@
                 quantityInput.value = currentValue + 1;
             });
 
-            // Initial price formatting
-            updatePrice();
-        });
-    </script>
+        // Initial price formatting
+        updatePrice();
+
+        function directOrder() {
+            const form = document.getElementById("orderForm");
+    const quantityInput = document.getElementById("quantity");
+    const orderQuantity = document.getElementById("orderQuantity");
+            orderQuantity.value = quantity.value;
+            log.info(quantity);
+            log.info(orderQuantity);
+            if(confirm("주문/결제 페이지로 이동합니다.")) {
+                form.submit();
+                return true;
+            }
+        }
+        const buyNowButton = document.getElementById('buy-now');
+        buyNowButton.addEventListener('click', directOrder);
+
+    });
+</script>
 </body>
 </html>

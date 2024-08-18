@@ -38,97 +38,145 @@
         height:13px;
     }
     .table th, td {
-         height: 40px;
+        vertical-align: middle;
+        height: 25px;
+    }
+    .page-link {
+      color: #000;
+      background-color: #fff;
+      border: 1px solid #ccc;
+    }
+    .page-item.active .page-link {
+     z-index: 1;
+     color: #555;
+     font-weight:bold;
+     background-color: #f1f1f1;
+     border-color: #ccc;
+    }
+    .page-link:focus, .page-link:hover {
+      color: #000;
+      background-color: #fafafa;
+      border-color: #ccc;
     }
 </style>
 <body>
 <th:block th:replace="~{fragments/header :: header}"></th:block>
-    <div class="container">
-        <p class="header-title">고객정보관리</p>
-        <br>
-        <div class="d-flex justify-content-end align-items-center" style="height: 50px;">
-            <select class="form-select selBox" id="grade">
-                <option value="" selected>등급</option>
-                <option value="일반">일반</option>
-                <option value="VIP">VIP</option>
-            </select>
-            <select class="form-select selBox" id="userRole">
-                <option value="" selected>권한</option>
-                <option value="SELLER">SELLER</option>
-                <option value="USER">USER</option>
-            </select>
-            <select class="form-select selBox" id="isActive">
-                <option value="" selected>사용여부</option>
-                <option value="Y">Y</option>
-                <option value="N">N</option>
-            </select>
-            <div class="input-group me-2 searchBar" style="width: 20%;">
-                <input type="text" class="form-control" placeholder="검색어 입력" id="keyword" aria-label="keyword" aria-describedby="basic-addon2">
-                <span class="input-group-text" type="button"><i class="bi bi-search"></i></span>
-            </div>
-<!--            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" style="margin-left: 28.5%;">-->
-<!--                <span style="font-size: 15px; font-weight: bold; ">등급변경</span>-->
-<!--            </button>-->
-            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="isActiveChange" style="margin-left: 33%;">
-                <span style="font-size: 15px; font-weight: bold;">사용여부변경</span>
-            </button>
-            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="bulkChange">
-                <span style="font-size: 15px; font-weight: bold;">일괄변경</span>
-            </button>
-            <button class="btn btn-outline-success btn-sm btnGroup" type="button" id="save" style="display: none;">
-                <span style="font-size: 15px; font-weight: bold;">변경적용</span>
-            </button>
-            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="cancel" style="display: none;">
-                <span style="font-size: 15px; font-weight: bold;">뒤로가기</span>
-            </button>
+<div class="container">
+    <p class="header-title">고객정보관리</p>
+    <br>
+    <div class="d-flex justify-content-end align-items-center" style="height: 50px;">
+        <select class="form-select selBox" id="gradeFilter">
+            <option value="" selected>등급</option>
+            <option value="일반">일반</option>
+            <option value="VIP">VIP</option>
+        </select>
+        <select class="form-select selBox" id="userRoleFilter">
+            <option value="" selected>권한</option>
+            <option value="SELLER">SELLER</option>
+            <option value="USER">USER</option>
+        </select>
+        <select class="form-select selBox" id="isActiveFilter">
+            <option value="" selected>사용여부</option>
+            <option value="Y">Y</option>
+            <option value="N">N</option>
+        </select>
+        <div class="input-group me-2 searchBar" style="width: 20%;">
+            <input type="text" class="form-control" placeholder="검색어 입력" id="keyword" aria-label="keyword" aria-describedby="basic-addon2">
+            <span class="input-group-text" id="searchBtn" type="button"><i class="bi bi-search"></i></span>
         </div>
-        <h6></h6>
-        <table class="table" >
-            <thead class="table-light">
-            <tr style="text-align: center; height: 50px; margin: auto;">
-                <th class="checkBox" style="display: none;">
-                    <input type="checkbox" id="selectAllCheckbox" onclick="allSelected()">
-                </th>
-                <th>순번</th>
-                <th>고객 ID</th>
-                <th>이름</th>
-                <th>생년월일</th>
-                <th>전화번호</th>
-                <th>이메일</th>
-                <th>가입일</th>
-                <th>잔여포인트</th>
-                <th>등급</th>
-                <th>권한</th>
-                <th>사용여부</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="userInfoDto, iterstat : ${userInfoDto}" style="text-align: center; height: 50px; margin: auto;" th:id="'user-row-' + ${userInfoDto.user.id}">
-                <td class="checkBox" style="display: none;">
-                    <input type="checkbox" th:value="${userInfoDto.userInfoCode}" name="selectedIds">
-                </td>
-                <td th:text="${iterstat.index+1}"></td>
-                <td th:text="${userInfoDto.user.id}"></td>
-                <td th:text="${userInfoDto.userName}"></td>
-                <td th:text="${userInfoDto.birthDate}"></td>
-                <td th:text="${userInfoDto.phoneNumber}"></td>
-                <td th:text="${userInfoDto.email}"></td>
-                <td th:text="${userInfoDto.createdDate}"></td>
-                <td th:text="${userInfoDto.currentPoint}"></td>
-                <td th:text="${userInfoDto.grade}"></td>
-                <td th:text="${userInfoDto.user.userRole}"></td>
-                <td  style="width: 8%;">
-                    <span id="active" th:text="${userInfoDto.isActive}" style="display: inline-block; text-align: center; width: 60%;"></span>
-                    <select class="form-select-sm selectIsActive" th:value="${userInfoDto.isActive}"
-                            style="display: none; width: 100%;" >
-                        <option th:text="${userInfoDto.isActive}" style="color: #828282;font-weight: bold;" hidden></option>
-                        <option value="Y">Y</option>
-                        <option value="N">N</option>
-                    </select>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <form th:action="@{/manage/updateGrade}" method="post" id="updateGradeForm" style="margin-left: 21%;">
+            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="updateGrade" >
+                <span style="font-size: 15px; font-weight: bold;">등급갱신</span>
+            </button>
+        </form>
+        <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="roleChangePop">
+            <span style="font-size: 15px; font-weight: bold;">SELLER 승인</span>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="roleAndIsActiveChange" >
+            <span style="font-size: 15px; font-weight: bold;">권한/사용여부변경</span>
+        </button>
+<!--            <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="bulkChange">-->
+<!--                <span style="font-size: 15px; font-weight: bold;">일괄변경</span>-->
+<!--            </button>-->
+        <button class="btn btn-outline-success btn-sm btnGroup" type="button" id="save" style="display: none;">
+            <span style="font-size: 15px; font-weight: bold;">변경적용</span>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btnGroup" type="button" id="cancel" style="display: none;">
+            <span style="font-size: 15px; font-weight: bold;">뒤로가기</span>
+        </button>
     </div>
+    <h6></h6>
+    <table class="table" >
+        <thead class="table-light">
+        <tr style="text-align: center; height: 50px; margin: auto;">
+<!--                <th class="checkBox" style="display: none;">-->
+<!--                    <input type="checkbox" id="selectAllCheckbox" onclick="allSelected()">-->
+<!--                </th>-->
+            <th>순번</th>
+            <th>고객 ID</th>
+            <th>이름</th>
+            <th>생년월일</th>
+            <th>전화번호</th>
+            <th>이메일</th>
+            <th>가입일</th>
+            <th>잔여포인트</th>
+            <th>등급</th>
+            <th>권한</th>
+            <th>사용여부</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="userInfoDto, iterstat : ${userInfoDto}" style="text-align: center; height: 50px; margin: auto;" th:id="'user-row-' + ${userInfoDto.user.id}">
+<!--                <td class="checkBox" style="display: none;">-->
+<!--                    <input type="checkbox" th:value="${userInfoDto.userInfoCode}" name="selectedIds">-->
+<!--                </td>-->
+            <td th:text="${iterstat.index+1}" id="index"></td>
+            <td th:text="${userInfoDto.user.id}" id="userId"></td>
+            <td th:text="${userInfoDto.userName}" id="userName"></td>
+            <td th:text="${userInfoDto.birthDate}" id="birthDate"></td>
+            <td th:text="${userInfoDto.phoneNumber}" id="phoneNumber"></td>
+            <td th:text="${userInfoDto.email}" id="email"></td>
+            <td th:text="${userInfoDto.createdDate}" id="createdDate"></td>
+            <td th:text="${#numbers.formatInteger(userInfoDto.currentPoint, 1, 'COMMA')}" id="currentPoint"></td>
+            <td th:text="${userInfoDto.grade}" id="grade"></td>
+<!--                <td th:text="${userInfoDto.user.userRole.name() == 'TEMP' ? 'USER' : userInfoDto.user.userRole.name()}" id="userRoleVal"></td>-->
+            <td style="width: 8%;">
+                <span id="userRoleVal" th:text="${userInfoDto.user.userRole.name() == 'TEMP' ? 'USER' : userInfoDto.user.userRole.name()}"
+                      style="display: inline-block; text-align: center; width: 60%;"></span>
+                <select class="form-select-sm selectUserRole" th:if="${userInfoDto.user.userRole.name() != 'ADMIN'}" th:value="${userInfoDto.user.userRole}"
+                        style="display: none; width: 90%;" >
+                    <option  th:text="${userInfoDto.user.userRole.name() == 'TEMP' ? 'USER' : userInfoDto.user.userRole.name()}" style="color: #828282;font-weight: bold;" hidden></option>
+                    <option value="SELLER">SELLER</option>
+                    <option value="USER">USER</option>
+                </select>
+            </td>
+            <td  style="width: 8%;">
+                <span id="active" th:text="${userInfoDto.isActive}" style="display: inline-block; text-align: center; width: 40%;"></span>
+                <select class="form-select-sm selectIsActive" th:value="${userInfoDto.isActive}"
+                        style="display: none; width: 50%;" >
+                    <option th:text="${userInfoDto.isActive}" style="color: #828282;font-weight: bold;" hidden></option>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                </select>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div aria-label="Page navigation" th:if="${userInfoDto.hasContent()}">
+        <ul class="pagination justify-content-end">
+            <li class="page-item" th:classappend="${userInfoDto.hasPrevious() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/manage/userMng(page=${userInfoDto.number - 1})}">Previous</a>
+            </li>
+            <th:block th:each="pageNumber : ${#numbers.sequence(0, userInfoDto.totalPages - 1)}">
+                <li class="page-item" th:classappend="${userInfoDto.number == pageNumber ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/manage/userMng(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+            </th:block>
+            <li class="page-item" th:classappend="${userInfoDto.hasNext() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/manage/userMng(page=${userInfoDto.number + 1})}">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
 </body>
 </html>

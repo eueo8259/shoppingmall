@@ -2,6 +2,8 @@ package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.constant.UserRole;
 import com.example.shoppingMall.entity.Category;
+import com.example.shoppingMall.dto.UserInfoDto;
+import com.example.shoppingMall.entity.Category;
 import com.example.shoppingMall.entity.Users;
 import com.example.shoppingMall.service.ProductService;
 import com.example.shoppingMall.service.UserService;
@@ -32,8 +34,11 @@ public class GlobalControllerAdvice {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String userRole = userService.findUserRole(userDetails.getUsername());
+            UserInfoDto userInfoDto = userService.findUserInfo(userDetails.getUsername());
+            int userCurrentPoint = userInfoDto.getCurrentPoint();
             model.addAttribute("username", userDetails.getUsername());
             model.addAttribute("userRole", userRole);
+            model.addAttribute("userCurrentPoint", userCurrentPoint);
             log.info(userRole.toString());
         }
 

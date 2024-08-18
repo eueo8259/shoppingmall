@@ -38,9 +38,14 @@ public class DeliveryService {
 
     public Long saveDelivery(DeliveryDto deliveryDto, String userId) {
         UserInfo findUser = userInfoRepository.findByUserId(userId);
-//        log.info(findUser.toString());
         Delivery delivery = DeliveryDto.toDeliveryEntity(deliveryDto);
         delivery.setUserInfo(findUser);
+        if(delivery.getDefaultYn().equals("Y")) {
+            Delivery defaultDelivery = deliveryRepository.findByUserInfo_userInfoCodeAndDefaultYn(findUser.getUserInfoCode(),"Y");
+            if (defaultDelivery != null) {
+                defaultDelivery.setDefaultYn("N");
+            }
+        }
         deliveryRepository.save(delivery);
         Long deliveryCode = deliveryRepository.findDeliveryCode(findUser.getUserInfoCode());
         return deliveryCode;

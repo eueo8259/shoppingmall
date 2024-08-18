@@ -73,6 +73,12 @@ function initLayerPosition(){
     });
 }
 
+    $('#defaultYnCheckbox').change(function() {
+        if ($(this).is(':checked')) {
+            alert('해당 배송지를 기본 배송지로 설정합니다.');
+        }
+    });
+
 $("#deliverySave").click(function() {
     var address1 = $("#address").val();
     var address2 = $("#detailAddress").val();
@@ -108,6 +114,27 @@ $("#deliverySave").click(function() {
         $("#form").submit()
         return true;
 });
+
+    $("#insertBtn").click(function() {
+        const userId = $("#userId").val();
+        $.ajax({
+            url: '/delivery/deliveryCount',
+            type: 'POST',
+            data: { userId: userId },
+            success: function(data) {
+                console.log(data);
+                if (data >= 7) {
+                    alert('배송지 등록 가능 범위를 초과했습니다. 삭제 후 등록해주세요.');
+                } else {
+                    window.location.href = '/delivery/insertDelivery';
+                }
+            },
+            error: function() {
+                alert("페이지 구동 시 오류가 발생했습니다.");
+            }
+        });
+    });
+
 
 
 

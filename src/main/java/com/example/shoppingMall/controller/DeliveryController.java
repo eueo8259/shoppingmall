@@ -1,7 +1,6 @@
 package com.example.shoppingMall.controller;
 
 import com.example.shoppingMall.dto.DeliveryDto;
-import com.example.shoppingMall.dto.UserPointDto;
 import com.example.shoppingMall.service.DeliveryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ public class DeliveryController {
                                @RequestParam("username") String userId){
         if(deliveryDto != null){
             deliveryService.saveDelivery(deliveryDto, userId);
-            return "redirect:/delivery/deliveryList";
+            return "redirect:/delivery/list";
         } else {
             return "redirect:/";
         }
@@ -104,10 +103,18 @@ public class DeliveryController {
         return "delivery/deliveryEdit";
     }
 
-    @PostMapping("deleteDelivery/{code}")
+    @PostMapping("/deleteDelivery/{code}")
     public String deleteDelivery(@PathVariable("code") Long code) {
         deliveryService.deleteDelivery(code);
-        return "redirect:/delivery/deliveryList";
+        return "redirect:/delivery/list";
     }
 
+    @PostMapping("/deliveryCount")
+    @ResponseBody
+    public int deliveryCount(@RequestParam("userId") String userId) {
+        List<DeliveryDto> deliveryDto = deliveryService.userDeliveryList(userId);
+        int deliveryCount = deliveryDto.size();
+        System.out.println("========================" + deliveryCount);
+        return deliveryCount;
+    }
 }

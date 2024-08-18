@@ -84,6 +84,26 @@ public class CartService {
         cartRepository.deleteById(itemId);
     }
 
+    public List<Cart> findCartCodes(Long[] orderItems) {
+        List<Cart> cartList = new ArrayList<>();
+        Cart cart = new Cart();
+        for(Long item : orderItems) {
+            cart = cartRepository.findById(item).orElse(null);
+            cartList.add(cart);
+        }
+        for (Cart c : cartList){
+            Product product = c.getProduct();
+
+            BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
+                    .multiply(product.getProductPrice());
+            BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
+
+            product.setProductPrice(roundedPrice);
+            c.setProduct(product);
+        }
+        return cartList;
+    }
+
 
     public Cart add(String user, Long productCode) {
         UserInfo userInfo = userInfoRepository.findByUserId(user);
@@ -93,15 +113,5 @@ public class CartService {
         cart.setQuantity(1);
         cart.setUserInfo(userInfo);
         return cartRepository.save(cart);
-    }
-
-    public List<Cart> findCartCodes(Long[] orderItems) {
-        List<Cart> cartList = new ArrayList<>();
-        Cart cart = new Cart();
-        for(Long item : orderItems) {
-            cart = cartRepository.findById(item).orElse(null);
-            cartList.add(cart);
-        }
-        return cartList;
     }
 }

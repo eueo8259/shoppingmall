@@ -169,6 +169,8 @@ $(document).ready(function() {
                             var formattedPoint = Number(data.currentPoint).toLocaleString();
                             var openerDocument = window.opener.document;
                             var pointElement = openerDocument.getElementById("currentPoint");
+                            pointElement.textContent = formattedPoint;
+                            alert("충전이 완료되었습니다.");
                             window.close();
                         }
                     },
@@ -253,14 +255,21 @@ $(document).ready(function() {
         var cartCodeList = [];
         var couponCode = $('.couponSelect').val();
 //        console.log(couponCode);
-        $('.cartListEach').each(function(index) {
-            var cartCode = $(this).find('.cartCode').val();
-            var productCode = $(this).find('.productCode').val();
-            var orderPrice = $(this).find('.price').val();
-            var orderQuantity = $(this).find('.quantity').val();
+        if ($('.cartListEach').length > 0) {
+            $('.cartListEach').each(function(index) {
+                var cartCode = $(this).find('.cartCode').val();
+                var productCode = $(this).find('.productCode').val();
+                var orderPrice = $(this).find('.price').val();
+                var orderQuantity = $(this).find('.quantity').val();
+                orderDetailList.push({ productCode: Number(productCode), orderPrice: Number(orderPrice), orderQuantity: Number(orderQuantity) });
+                cartCodeList.push(cartCode);
+            });
+        } else {
+            var productCode = $('.productCode').val();
+            var orderPrice = $('.price').val();
+            var orderQuantity = $('.quantity').val();
             orderDetailList.push({ productCode: Number(productCode), orderPrice: Number(orderPrice), orderQuantity: Number(orderQuantity) });
-            cartCodeList.push(cartCode);
-        });
+        }
 
         var orderDto = {
             userInfo: {

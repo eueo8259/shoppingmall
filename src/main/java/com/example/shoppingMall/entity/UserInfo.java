@@ -25,7 +25,7 @@ public class UserInfo {
     private String phoneNumber;
     private LocalDate createdDate;
     private String email;
-    private LocalDate birthDate;
+    private String birthDate;
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
     private String grade ="일반";

@@ -22,7 +22,7 @@ public class QUserInfo extends EntityPathBase<UserInfo> {
 
     public static final QUserInfo userInfo = new QUserInfo("userInfo");
 
-    public final DatePath<java.time.LocalDate> birthDate = createDate("birthDate", java.time.LocalDate.class);
+    public final StringPath birthDate = createString("birthDate");
 
     public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
 

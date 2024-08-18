@@ -91,6 +91,21 @@ public class ProductService {
     }
 
     @Transactional
+    public List<ProductDto> printProduct(String categoryName) {
+        String sql = "SELECT p FROM Product p WHERE p.category.categoryName = :categoryName";
+        TypedQuery<Product> query = em.createQuery(sql, Product.class);
+        query.setParameter("categoryName", categoryName); // Named parameter에 값 설정
+        List<Product> productList = query.getResultList();
+
+        List<ProductDto> productDtoList = new ArrayList<>();
+        for (Product product : productList) {
+            ProductDto productDto = productDtoFromEntity(product);
+            productDtoList.add(productDto);
+        }
+        return productDtoList;
+    }
+
+    @Transactional
     public void productUpdate(ProductDto productDto, MultipartFile mainImg, List<MultipartFile> subImg) throws IOException {
         Product product = em.find(Product.class, productDto.getProductCode());
         Category category = em.find(Category.class, productDto.getCategoryCode());

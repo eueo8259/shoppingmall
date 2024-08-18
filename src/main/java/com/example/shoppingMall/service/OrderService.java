@@ -1,5 +1,6 @@
 package com.example.shoppingMall.service;
 
+import com.example.shoppingMall.api.CashedExRateProvider;
 import com.example.shoppingMall.dto.OrderDetailDto;
 import com.example.shoppingMall.dto.OrderDto;
 import com.example.shoppingMall.dto.ProductDto;
@@ -12,14 +13,20 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,6 +47,8 @@ public class OrderService {
     ProductService productService;
     @Autowired
     UserCouponRepository userCouponRepository;
+    @Autowired
+    CashedExRateProvider exRateProvider;
 
     public void insertOrder(OrderDto orderDto, List<Map<String, Object>> orderDetailList, Long[] cartCodeList, Long couponCode) {
         log.info(orderDto.getUserInfo().getUserInfoCode().toString());
@@ -59,18 +68,22 @@ public class OrderService {
         orderRepository.save(orders);
 
         Long orderCode = orderRepository.findCode(orders.getUserInfo().getUserInfoCode());
-
-        OrderDetail orderDetail = new OrderDetail();
-        for(int i = 0; i < orderDetailList.size(); i++) {
-            orderDetail.setOrders(new Orders());
+        log.info(String.valueOf(orderCode));
+        for (Map<String, Object> detail : orderDetailList) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrders(orders);
             orderDetail.setProduct(new Product());
             orderDetail.getOrders().setOrderCode(orderCode);
-            orderDetail.getProduct().setProductCode(Long.valueOf(String.valueOf(orderDetailList.get(i).get("productCode"))));
-            orderDetail.setOrderQuantity(Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderQuantity"))));
-            orderDetail.setOrderPrice(Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderPrice"))));
-            productService.buyProduct(Long.valueOf(String.valueOf(orderDetailList.get(i).get("productCode"))), Integer.parseInt(String.valueOf(orderDetailList.get(i).get("orderQuantity"))));
+            orderDetail.getProduct().setProductCode(Long.valueOf(String.valueOf(detail.get("productCode"))));
+            orderDetail.setOrderQuantity(Integer.parseInt(String.valueOf(detail.get("orderQuantity"))));
+            orderDetail.setOrderPrice(Integer.parseInt(String.valueOf(detail.get("orderPrice"))));
+
+            // Log each order detail for debugging
+            log.info(orderDetail.toString());
+
+            // Save each OrderDetail object
+            orderDetailRepository.save(orderDetail);
         }
-        orderDetailRepository.save(orderDetail);
 
         UserPoint userPoint = new UserPoint();
         userPoint.setUserInfo(userInfo);
@@ -89,23 +102,23 @@ public class OrderService {
         log.info(couponCode.toString());
     }
 
-    public List<OrderDto> findOrders(Principal principal) {
+    public Page<OrderDto> findOrders(Principal principal, Pageable pageable) {
         UserInfo userInfo = userInfoRepository.findByUserId(principal.getName());
-        List<OrderDto> ordersDto = orderRepository.findByUserInfo_userInfoCode(userInfo.getUserInfoCode())
-                .stream().map(OrderDto::fromOrdersEntity).toList();
-        List<OrderDto> orderList = new ArrayList<>();
-        for (OrderDto orderDto : ordersDto){
+        Page<Orders> orders = orderRepository.findByUserInfo_userInfoCode(userInfo.getUserInfoCode(), pageable);
+        List<OrderDto> orderDtos = orders.stream()
+                .map(OrderDto::fromOrdersEntity)
+                .toList();
+        for (OrderDto orderDto : orderDtos){
             Long orderCode = orderDto.getOrderCode();
             List<OrderDetailDto> orderDetailList = orderDetailRepository.findByOrders_orderCode(orderCode)
                     .stream().map(OrderDetailDto::fromOrderDetailEntity).toList();
             orderDto.setOrderDetailList(orderDetailList);
-            orderList.add(orderDto);
         }
-        log.info(orderList.toString());
+        Page<OrderDto> orderList = new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
         return orderList;
     }
 
-    public List<OrderDetailDto> findOrderDetail(List<OrderDto> orderList) {
+    public List<OrderDetailDto> findOrderDetail(Page<OrderDto> orderList) {
         List<OrderDetailDto> orderDetailList = new ArrayList<>();
         for(OrderDto orderDto : orderList) {
             Long orderCode = orderDto.getOrderCode();
@@ -120,6 +133,10 @@ public class OrderService {
     public OrderDetailDto newOrderDetail(Long orderItem, int quantity) {
         Product product = productService.findOrderItem(orderItem);
         OrderDetailDto orderDetailDto = new OrderDetailDto();
+        BigDecimal priceInCurrency = exRateProvider.getCachedExRate(product.getCurrency())
+                .multiply(product.getProductPrice());
+        BigDecimal roundedPrice = priceInCurrency.setScale(0, RoundingMode.HALF_UP);
+        product.setProductPrice(roundedPrice);
         orderDetailDto.setProduct(product);
         orderDetailDto.setOrderQuantity(quantity);
         return orderDetailDto;
