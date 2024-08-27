@@ -114,7 +114,10 @@
 - 문의 및 답변 기능
 
 ---
+# ERD
+![shoppingmall ERD](https://github.com/user-attachments/assets/d73b48fe-a884-4fea-9b13-a7076675f52a)
 
+---
 # 화면구성
 ### 메인페이지
 ![메인페이지](https://github.com/user-attachments/assets/3f826653-a9f1-476b-b191-9fd42c50119c)
